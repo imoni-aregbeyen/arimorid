@@ -7,7 +7,7 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
 
 <head>
     <meta charset="utf-8">
-    <title>Arimorid - Real Estate HTML Template</title>
+    <title>Arimorid - Estate Managers and General Contractors</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -38,11 +38,11 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
 <body>
     <div class="container-xxl bg-white p-0">
         <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <!-- <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
-        </div>
+        </div> -->
         <!-- Spinner End -->
 
 
@@ -150,10 +150,10 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
                 <div class="copyright">
                     <div class="row">
                         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                            &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved. 
+                            <!-- &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved.  -->
 							
 							<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-							Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
+							<!-- Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> -->
                         </div>
                         <div class="col-md-6 text-center text-md-end">
                             <div class="footer-menu">
