@@ -77,6 +77,11 @@ if ($result->num_rows > 0) {
                           <?= $property['bath'] ?> bath <br>
                         </p>
                       </td>
+                      <td>
+                        <a href="?page=edit-property&id=<?= $property['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="?page=delete-property&id=<?= $property['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
+                        <!-- <a href="?page=property&id=<?= $property['id'] ?>" class="btn btn-info btn-sm">View</a> -->
+                      </td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>
