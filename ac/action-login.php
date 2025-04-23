@@ -1,0 +1,51 @@
+<?php
+session_start();
+require_once '../config/db.php'; // Include database connection, test_input function, and other necessary files
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = test_input($_POST['email']);
+    $password = test_input($_POST['password']);
+
+    if (!empty($email) && !empty($password)) {
+        // Prepare SQL query to fetch user
+        $stmt = $conn->prepare("SELECT id, password, role, verified FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
+
+            // Verify password
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+
+                // Redirect based on role and verification status
+                if ($user['role'] === 'admin') {
+                    header("Location: ../dashboard/");
+                } elseif ($user['role'] === 'user') {
+                    if ($user['verified'] == 0) {
+                        header("Location: ../dashboard/?page=kyc");
+                    } else {
+                        header("Location: ../?page=property-list");
+                    }
+                }
+                exit;
+            } else {
+                $_SESSION['error'] = "Invalid email or password.";
+            }
+        } else {
+            $_SESSION['error'] = "Invalid email or password.";
+        }
+
+        $stmt->close();
+    } else {
+        $_SESSION['error'] = "Please fill in all fields.";
+    }
+} else {
+    $_SESSION['error'] = "Invalid request method.";
+}
+
+header("Location: ../?page=login");
+exit;
+?>
