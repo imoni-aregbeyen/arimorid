@@ -1,4 +1,4 @@
-        <div class="container-xxl py-5" id="property-list">
+<div class="container-xxl py-5" id="property-list">
             <div class="container">
                 <div class="row g-0 gx-5 align-items-end">
                     <div class="col-lg-6">
@@ -42,6 +42,9 @@
                                         <small class="flex-fill text-center border-end py-2"><i class="fa fa-bed text-primary me-2"></i><?= $property['bed'] ?> Bed</small>
                                         <small class="flex-fill text-center py-2"><i class="fa fa-bath text-primary me-2"></i><?= $property['bath'] ?> Bath</small>
                                     </div>
+                                    <div class="text-center mt-3">
+                                        <a class="btn btn-success py-2 px-4" href="order.php?property_id=<?= $property['id'] ?>">Order Now</a>
+                                    </div>
                                 </div>
                             </div>
                             <?php $delay = ($delay < 0.5) ? ($delay + 0.2) : 0.1; endforeach; ?>
@@ -70,6 +73,9 @@
                                         <small class="flex-fill text-center border-end py-2"><i class="fa fa-bed text-primary me-2"></i><?= $property['bed'] ?> Bed</small>
                                         <small class="flex-fill text-center py-2"><i class="fa fa-bath text-primary me-2"></i><?= $property['bath'] ?> Bath</small>
                                     </div>
+                                    <div class="text-center mt-3">
+                                        <a class="btn btn-success py-2 px-4" href="?page=order&property_id=<?= $property['id'] ?>">Order Now</a>
+                                    </div>
                                 </div>
                             </div>
                             <?php $delay = ($delay < 0.5) ? ($delay + 0.2) : 0.1; endforeach; ?>
@@ -97,6 +103,9 @@
                                         <small class="flex-fill text-center border-end py-2"><i class="fa fa-ruler-combined text-primary me-2"></i><?= $property['sqft'] ?> Sqft</small>
                                         <small class="flex-fill text-center border-end py-2"><i class="fa fa-bed text-primary me-2"></i><?= $property['bed'] ?> Bed</small>
                                         <small class="flex-fill text-center py-2"><i class="fa fa-bath text-primary me-2"></i><?= $property['bath'] ?> Bath</small>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <a class="btn btn-success py-2 px-4" href="?page=order&property_id=<?= $property['id'] ?>">Order Now</a>
                                     </div>
                                 </div>
                             </div>
