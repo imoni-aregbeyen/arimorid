@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS properties (
     bath INT NOT NULL,
     images JSON NOT NULL,
     owner_id INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (owner_id) REFERENCES owners(id) ON DELETE SET DEFAULT
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 if (!$conn->query($tableQuery)) {
     die('Error creating table: ' . $conn->error);

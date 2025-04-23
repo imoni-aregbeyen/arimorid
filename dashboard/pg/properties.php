@@ -1,12 +1,16 @@
 <?php
-$sql = "SELECT * FROM properties ORDER BY created_at DESC LIMIT 12";
-$result = $conn->query($sql);
-if ($result->num_rows > 0) {
-  while ($row = $result->fetch_assoc()) {
-    $properties[] = $row;
-  }
-} else {
-  $properties = [];
+try {
+    $sql = "SELECT * FROM properties ORDER BY created_at DESC LIMIT 12";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $properties[] = $row;
+        }
+    } else {
+        $properties = [];
+    }
+} catch (mysqli_sql_exception $e) {
+    die("Error: " . $e->getMessage());
 }
 ?>
       <!-- [ breadcrumb ] start -->
@@ -78,9 +82,13 @@ if ($result->num_rows > 0) {
                         </p>
                       </td>
                       <td>
-                        <a href="?page=edit-property&id=<?= $property['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
-                        <a href="?page=delete-property&id=<?= $property['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
-                        <!-- <a href="?page=property&id=<?= $property['id'] ?>" class="btn btn-info btn-sm">View</a> -->
+                        <?php if ($property['owner_id'] == 0): ?>
+                          <a href="?page=add-owner&id=<?= $property['id'] ?>" class="btn btn-warning btn-sm">Add Owner</a>
+                        <?php else: ?>
+                          <a href="?page=edit-property&id=<?= $property['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                          <a href="?page=delete-property&id=<?= $property['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
+                          <!-- <a href="?page=property&id=<?= $property['id'] ?>" class="btn btn-info btn-sm">View</a> -->
+                        <?php endif; ?>
                       </td>
                     </tr>
                   <?php endforeach; ?>
