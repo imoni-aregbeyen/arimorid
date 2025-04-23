@@ -16,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 password VARCHAR(255) NOT NULL,
                 role ENUM('admin', 'user', 'owner') NOT NULL DEFAULT 'user',
                 verified TINYINT(1) DEFAULT 0,
+                phone VARCHAR(20) DEFAULT NULL,
+                account_number VARCHAR(50) DEFAULT NULL,
+                bank_name VARCHAR(255) DEFAULT NULL,
+                account_name VARCHAR(255) DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ";

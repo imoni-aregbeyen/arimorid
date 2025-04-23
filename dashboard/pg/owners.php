@@ -1,6 +1,6 @@
 <?php
 try {
-    $sql = "SELECT * FROM owners ORDER BY created_at DESC LIMIT 12";
+    $sql = "SELECT * FROM users WHERE role='owner' ORDER BY created_at DESC LIMIT 12";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -38,7 +38,7 @@ try {
         <div class="col-sm-12">
           <div class="card">
             <div class="card-header">
-              <h5>Hello card</h5>
+              <h5>Owners</h5>
             </div>
             <div class="card-body">
               <table class="table">

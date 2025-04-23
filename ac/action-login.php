@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($email) && !empty($password)) {
         // Prepare SQL query to fetch user
-        $stmt = $conn->prepare("SELECT id, password, role, verified FROM users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT id, name, password, role, verified FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -19,6 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verify password
             if (password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['user_verified'] = $user['verified'];
+                $_SESSION['user_email'] = $email; // Store email in session
+                $_SESSION['user_name'] = $user['name']; // Store name in session
 
                 // Redirect based on role and verification status
                 if ($user['role'] === 'admin') {

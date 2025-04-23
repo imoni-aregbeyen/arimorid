@@ -217,7 +217,7 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
         aria-expanded="false"
       >
         <img src="../assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar">
-        <span>Stebin Ben</span>
+        <span><?= $_SESSION['user_name'] ?></span>
       </a>
       <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
         <div class="dropdown-header">
@@ -226,10 +226,10 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
               <img src="../assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar wid-35">
             </div>
             <div class="flex-grow-1 ms-3">
-              <h6 class="mb-1">Stebin Ben</h6>
-              <span>UI/UX Designer</span>
+              <h6 class="mb-1"><?= $_SESSION['user_name'] ?></h6>
+              <span><?= ucwords($_SESSION['user_role']) ?></span>
             </div>
-            <a href="#!" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>
+            <a href="../ac/action-logout.php" class="pc-head-link bg-transparent"><i class="ti ti-power text-danger"></i></a>
           </div>
         </div>
         <ul class="nav drp-tabs nav-fill nav-tabs" id="mydrpTab" role="tablist">
@@ -278,7 +278,7 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
               <i class="ti ti-wallet"></i>
               <span>Billing</span>
             </a>
-            <a href="#!" class="dropdown-item">
+            <a href="../ac/action-logout.php" class="dropdown-item">
               <i class="ti ti-power"></i>
               <span>Logout</span>
             </a>
