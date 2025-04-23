@@ -4,6 +4,11 @@ $username = "root";
 $password = "";
 $dbname = "arimorid";
 
+// $servername = "sdb-80.hosting.stackcp.net";
+// $username = "arimoride-353038356e7a";
+// $password = "01#Admin@arimoridgr";
+// $dbname = "arimoride-353038356e7a";
+
 try {
     // Create connection without specifying a database
     $conn = new mysqli($servername, $username, $password);
