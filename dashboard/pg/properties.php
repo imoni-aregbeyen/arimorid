@@ -84,7 +84,10 @@ try {
                       <td>
                         <?php if ($property['owner_id'] == 0): ?>
                           <a href="?page=add-owner&id=<?= $property['id'] ?>" class="btn btn-warning btn-sm">Add Owner</a>
+                          <a href="?page=edit-property&id=<?= $property['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                          <a href="?page=delete-property&id=<?= $property['id'] ?>" class="btn btn-danger btn-sm">&times;</a>
                         <?php else: ?>
+                          <a href="?page=update-owner&id=<?= $property['id'] ?>" class="btn btn-outline-warning btn-sm">Owner</a>
                           <a href="?page=edit-property&id=<?= $property['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
                           <a href="?page=delete-property&id=<?= $property['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
                           <!-- <a href="?page=property&id=<?= $property['id'] ?>" class="btn btn-info btn-sm">View</a> -->

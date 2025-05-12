@@ -85,10 +85,22 @@ if (!$images) {
                   <script>
                     document.getElementById('owner').addEventListener('change', function () {
                       const newOwnerForm = document.querySelector('.new-owner-form');
+                      const inputs = newOwnerForm.querySelectorAll('input');
                       if (this.value === 'new') {
                         newOwnerForm.style.display = 'block';
+                        inputs.forEach(input => input.disabled = false);
                       } else {
                         newOwnerForm.style.display = 'none';
+                        inputs.forEach(input => input.disabled = true);
+                      }
+                    });
+
+                    // Disable fields in the hidden form on page load
+                    document.addEventListener('DOMContentLoaded', function () {
+                      const newOwnerForm = document.querySelector('.new-owner-form');
+                      const inputs = newOwnerForm.querySelectorAll('input');
+                      if (newOwnerForm.style.display === 'none') {
+                        inputs.forEach(input => input.disabled = true);
                       }
                     });
                   </script>
