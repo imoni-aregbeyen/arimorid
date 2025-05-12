@@ -85,10 +85,13 @@ if (!$images) {
                   <script>
                     document.getElementById('owner').addEventListener('change', function () {
                       const newOwnerForm = document.querySelector('.new-owner-form');
+                      const inputs = newOwnerForm.querySelectorAll('input');
                       if (this.value === 'new') {
                         newOwnerForm.style.display = 'block';
+                        inputs.forEach(input => input.required = true);
                       } else {
                         newOwnerForm.style.display = 'none';
+                        inputs.forEach(input => input.required = false);
                       }
                     });
                   </script>

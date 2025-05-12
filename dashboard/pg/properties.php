@@ -1,6 +1,7 @@
 <?php
 try {
-    $sql = "SELECT * FROM properties ORDER BY created_at DESC LIMIT 12";
+    // $sql = "SELECT * FROM properties ORDER BY created_at DESC LIMIT 12";
+    $sql = "SELECT p.*, o.name AS owner_name FROM properties p LEFT JOIN users o ON p.owner_id = o.id ORDER BY p.created_at DESC";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -46,6 +47,7 @@ try {
                     <th></th>
                     <th>Images</th>
                     <th>Property</th>
+                    <th>Owner</th>
                     <th>Address</th>
                     <th>Price (&#8358;)</th>
                     <th>Features</th>
@@ -67,6 +69,9 @@ try {
                       <td>
                         <h5 class=""><?= $property['title'] ?></h5>
                         <p class=""><?= $property['property_type'] ?></p>
+                      </td>
+                      <td>
+                        <p class=""><?= $property['owner_name'] ?></p>
                       </td>
                       <td>
                         <p class=""><?= $property['address'] ?></p>
