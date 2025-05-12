@@ -23,7 +23,7 @@ try {
               </div>
               <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="./">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="?page=add-property" class="">Add Property</a></li>
+                <li class="breadcrumb-item"><a href="?page=add-property" class="btn btn-sm btn-outline-dark">Add Property</a></li>
               </ul>
             </div>
           </div>
