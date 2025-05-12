@@ -12,9 +12,19 @@
     <div class="mb-3">
       <label for="password" class="form-label">Password</label>
       <input type="password" name="password" id="password" class="form-control" required>
+      <div class="form-check mt-2">
+        <input type="checkbox" class="form-check-input" id="togglePassword">
+        <label class="form-check-label" for="togglePassword">Show Password</label>
+      </div>
     </div>
     <div class="mb-3 d-grid gap-2">
       <button type="submit" class="btn btn-primary">Login</button>
     </div>
   </form>
 </div>
+<script>
+  document.getElementById('togglePassword').addEventListener('change', function () {
+    const passwordField = document.getElementById('password');
+    passwordField.type = this.checked ? 'text' : 'password';
+  });
+</script>
