@@ -75,6 +75,12 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
           </a>
         </li>
         <li class="pc-item">
+          <a href="?page=service-apartments" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-building"></i></span>
+            <span class="pc-mtext">Service Apartments</span>
+          </a>
+        </li>
+        <li class="pc-item">
           <a href="?page=owners" class="pc-link">
             <span class="pc-micon"><i class="ti ti-users"></i></span>
             <span class="pc-mtext">Owners</span>
