@@ -28,6 +28,22 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     echo "<p class='text-center'>Invalid apartment ID.</p>";
     exit;
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Check if user is logged in
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ./?page=login");
+        exit;
+    }
+
+    // Handle booking logic here
+    $selected_addons = isset($_POST['addons']) ? $_POST['addons'] : [];
+    $apartment_id = $_POST['id'];
+
+    // Process the booking with the selected addons
+    // For example, save to database or send confirmation email
+    // ...
+}   
 ?>
 
 <style>
@@ -99,7 +115,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                 <div class="card p-3">
                     <div class="mb-3">
                         <label for="days" class="form-label"><strong>Number of Days:</strong></label>
-                        <input type="number" id="days" class="form-control" value="1" min="1">
+                        <input type="number" id="days" class="form-control" value="1" min="1" form="booking-form">
                     </div>
                     <?php
                     $base_cost = $apartment['listing_daily_charge'] + $apartment['service_charge'];
@@ -136,7 +152,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                     <hr>
                     <!-- Book Now Button -->
                     <?php if (!empty($addons)): ?>
-                        <form method="GET" action="./?=booking">
+                        <form method="POST" action="" id="booking-form">
                             <?php foreach ($addons as $addon): ?>
                                 <input type="hidden" name="addons[]" value="<?php echo $addon['id']; ?>">
                             <?php endforeach; ?>
