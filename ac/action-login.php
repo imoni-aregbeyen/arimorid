@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_verified'] = $user['verified'];
                 $_SESSION['user_email'] = $email; // Store email in session
                 $_SESSION['user_name'] = $user['name']; // Store name in session
-
+                $_SESSION['logged_in'] = true;
                 // Redirect based on role and verification status
                 if ($user['role'] === 'admin') {
                     header("Location: ../dashboard/");

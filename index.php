@@ -1,5 +1,6 @@
 <?php
 require_once './config/db.php';
+session_start();
 $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
 
 $sql = "SELECT * FROM properties ORDER BY id DESC LIMIT 6 OFFSET 0";
@@ -82,25 +83,13 @@ if ($properties_count == 0) {
                         <a href="./" class="nav-item nav-link active">Home</a>
                         <a href="?page=about" class="nav-item nav-link">About</a>
                         <a href="?page=property-list" class="nav-item nav-link">Property List</a>
-                        <!-- <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Property</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="?page=property-list" class="dropdown-item">Property List</a>
-                                <a href="?page=property-type" class="dropdown-item">Property Type</a>
-                                <a href="?page=property-agent" class="dropdown-item">Property Agent</a>
-                            </div>
-                        </div> -->
-                        <!-- <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="?page=testimonial" class="dropdown-item">Testimonial</a>
-                                <a href="?page=404" class="dropdown-item">404 Error</a>
-                            </div>
-                        </div> -->
                         <a href="?page=contact" class="nav-item nav-link">Contact</a>
                     </div>
-                    <!-- <a href="./dashboard/?page=add-property" class="btn btn-primary px-3 d-none d-lg-flex">Add Property</a> -->
-                    <a href="./dashboard/" class="btn btn-primary px-3 d-none d-lg-flex">Dashboard</a>
+                    <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+                        <a href="./dashboard/" class="btn btn-primary px-3 d-none d-lg-flex">Dashboard</a>
+                    <?php else: ?>
+                        <a href="./?page=login" class="btn btn-primary px-3 d-none d-lg-flex">Login</a>
+                    <?php endif; ?>
                 </div>
             </nav>
         </div>

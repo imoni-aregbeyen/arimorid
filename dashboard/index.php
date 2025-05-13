@@ -86,6 +86,12 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
             <span class="pc-mtext">Orders</span>
           </a>
         </li>
+        <li class="pc-item">
+          <a href="?page=addons" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-list"></i></span>
+            <span class="pc-mtext">Additional Services</span>
+          </a>
+        </li>
       </ul>
     </div>
   </div>

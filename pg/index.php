@@ -4,7 +4,7 @@
                 <div class="col-md-6 p-5 mt-lg-5">
                     <h1 class="display-5 animated fadeIn mb-4">Find A <span class="text-primary">Perfect Home</span> To Live With Your Family</h1>
                     <p class="animated fadeIn mb-4 pb-2">Discover your dream home with ease. Explore a wide range of properties tailored to your needs and preferences.</p>
-                    <a href="?page=property-list#property-list" class="btn btn-primary py-3 px-5 me-3 animated fadeIn">Get Started</a>
+                    <a href="?page=service-apartments" class="btn btn-primary py-3 px-5 me-3 animated fadeIn">See Service Apartments</a>
                 </div>
                 <div class="col-md-6 animated fadeIn">
                     <div class="owl-carousel header-carousel">
