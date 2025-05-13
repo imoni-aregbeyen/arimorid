@@ -82,7 +82,8 @@ if ($properties_count == 0) {
                     <div class="navbar-nav ms-auto">
                         <a href="./" class="nav-item nav-link active">Home</a>
                         <a href="?page=about" class="nav-item nav-link">About</a>
-                        <a href="?page=property-list" class="nav-item nav-link">Property List</a>
+                        <a href="?page=service-apartments" class="nav-item nav-link">Service Apartments</a>
+                        <a href="?page=property-list" class="nav-item nav-link">Properties</a>
                         <a href="?page=contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
