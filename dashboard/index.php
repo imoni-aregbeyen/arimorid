@@ -68,12 +68,12 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
             <span class="pc-mtext">Dashboard</span>
           </a>
         </li>
-        <li class="pc-item">
+        <!-- <li class="pc-item">
           <a href="?page=properties" class="pc-link">
             <span class="pc-micon"><i class="ti ti-building"></i></span>
             <span class="pc-mtext">Properties</span>
           </a>
-        </li>
+        </li> -->
         <li class="pc-item">
           <a href="?page=service-apartments" class="pc-link">
             <span class="pc-micon"><i class="ti ti-building"></i></span>
