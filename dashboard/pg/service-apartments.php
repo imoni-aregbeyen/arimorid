@@ -44,13 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $owner_daily_charge = floatval($_POST['owner_daily_charge']);
         $listing_daily_charge = floatval($_POST['listing_daily_charge']);
         $service_charge = floatval($_POST['service_charge']);
+        $owner_id = intval($_POST['owner_id']);
 
         $edit_sql = "UPDATE service_apartments SET 
                         address = '$address', 
                         title = '$title', 
                         owner_daily_charge = $owner_daily_charge, 
                         listing_daily_charge = $listing_daily_charge, 
-                        service_charge = $service_charge 
+                        service_charge = $service_charge,
+                        owner_id = $owner_id
                      WHERE id = $edit_id";
         if ($conn->query($edit_sql)) {
             echo "<div class='alert alert-success'>Service apartment updated successfully.</div>";
@@ -76,16 +78,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <th>Owner Daily Charge</th>
                     <th>Listing Daily Charge</th>
                     <th>Service Charge</th>
+                    <th>Owner</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $sql = "SELECT id, images, address, title, owner_daily_charge, listing_daily_charge, service_charge FROM service_apartments";
+                $sql = "SELECT id, owner_id, images, address, title, owner_daily_charge, listing_daily_charge, service_charge FROM service_apartments";
                 $result = $conn->query($sql);
                 if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) { $images = explode(',', $row['images']);
+                    while ($row = $result->fetch_assoc()) {
+                        $images = explode(',', $row['images']);
                         $row['images'] = $images[0]; // Display only the first image
+
+                        // Fetch owners for the dropdown
+                        $owners_sql = "SELECT id, name FROM users WHERE role='owner'";
+                        $owners_result = $conn->query($owners_sql);
+                        $owners_options = '';
+                        if ($owners_result->num_rows > 0) {
+                            while ($owner = $owners_result->fetch_assoc()) {
+                                $selected = $owner['id'] == $row['owner_id'] ? 'selected' : '';
+                                $owners_options .= "<option value='{$owner['id']}' $selected>{$owner['name']}</option>";
+                            }
+                        } else {
+                            $owners_options = "<option value=''>No owners available</option>";
+                        }
+
                         echo "<tr>
                                 <td>{$row['id']}</td>
                                 <td><img src='../uploads/{$row['images']}' alt='Apartment Image' style='width: 100px; height: auto;'></td>
@@ -105,6 +123,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </td>
                                 <td>
                                         <input type='number' step='0.01' name='service_charge' value='{$row['service_charge']}' class='form-control form-control-sm'>
+                                </td>
+                                <td>
+                                    <select name='owner_id' class='form-control form-control-sm'>
+                                        $owners_options
+                                    </select>
                                 </td>
                                 <td>
                                         <button type='submit' class='btn btn-sm btn-warning' style='width: 80px;'>Update</button>

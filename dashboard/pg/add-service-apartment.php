@@ -1,4 +1,19 @@
 <?php
+$sql = "SELECT * FROM users WHERE role = 'owner'"; // id, name, email, phone
+$result = $conn->query($sql);
+if ($result === false) {
+    echo "<script>alert('Database error: Failed to fetch owners');</script>";
+    exit;
+}
+$owners = [];
+while ($row = $result->fetch_assoc()) {
+    $owners[] = $row;
+}
+if (empty($owners)) {
+    echo "<script>alert('No owners found. Please add an owner first.'); window.location.href='./?page=owners';</script>";
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle form submission
     $address = $_POST['address'];
@@ -6,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $owner_daily_charge = $_POST['owner_daily_charge'];
     $listing_daily_charge = $_POST['listing_daily_charge'];
     $service_charge = $_POST['service_charge'];
+    $owner_id = $_POST['owner_id'];
     $images = [];
 
     // Handle file upload
@@ -23,13 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $images = implode(',', $images);
     }
 
-    $sql = "INSERT INTO service_apartments (images, address, title, owner_daily_charge, listing_daily_charge, service_charge) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO service_apartments (images, address, title, owner_daily_charge, listing_daily_charge, service_charge, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if ($stmt === false) {
         echo "<script>alert('Database error: Failed to prepare statement');</script>";
         exit;
     }
-    $stmt->bind_param("sssddd",$images, $address, $title, $owner_daily_charge, $listing_daily_charge, $service_charge);
+    $stmt->bind_param("sssdddi",$images, $address, $title, $owner_daily_charge, $listing_daily_charge, $service_charge, $owner_id);
     if (!$stmt->execute()) {
         echo "<script>alert('Database error: Failed to execute statement');</script>";
         $stmt->close();
@@ -78,6 +94,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="mb-3">
                 <label for="serviceCharge" class="form-label">Service Charge</label>
                 <input type="number" class="form-control" id="serviceCharge" name="service_charge" placeholder="Enter service charge">
+            </div>
+            <div class="mb-3">
+                <label for="owner_id" class="form-label">Select Owner</label>
+                <select class="form-select" id="owner_id" name="owner_id">
+                    <option value="" disabled selected>Select an owner</option>
+                    <?php foreach ($owners as $owner): ?>
+                        <option value="<?= $owner['id'] ?>"><?= $owner['name'] ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
