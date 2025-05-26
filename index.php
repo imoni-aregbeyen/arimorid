@@ -4,10 +4,12 @@ session_start();
 $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
 
 $sql = "SELECT * FROM properties ORDER BY id DESC LIMIT 6 OFFSET 0";
+$qry = "SELECT * FROM service_apartments ORDER BY id DESC LIMIT 6 OFFSET 0";
 if (isset($_GET['view'])) {
     $view = test_input($_GET['view']);
     $offset = ($view - 1) * 6;
     $sql = "SELECT * FROM properties ORDER BY id DESC LIMIT 6 OFFSET $offset";
+    $qry = "SELECT * FROM service_apartments ORDER BY id DESC LIMIT 6 OFFSET $offset";
 } else {
     $view = 1;
     $offset = 0;
@@ -19,6 +21,12 @@ if ($properties_count == 0) {
     $properties = array();
 }
 
+$result = mysqli_query($conn, $qry);
+$service_apartments = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$service_apartments_count = mysqli_num_rows($result);
+if ($service_apartments_count == 0) {
+    $service_apartments = array();
+}
 
 ?>
 
