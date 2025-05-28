@@ -96,7 +96,13 @@ define('WHATSAPP_LINK', 'https://wa.me/2347016928568');
                         <a href="./" class="nav-item nav-link active">Home</a>
                         <a href="?page=about" class="nav-item nav-link">About</a>
                         <a href="?page=service-apartments" class="nav-item nav-link">Service Apartments</a>
-                        <a href="?page=property-list" class="nav-item nav-link">Properties</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="?page=services" class="dropdown-item">Our Services</a>
+                                <a href="?page=property-list" class="dropdown-item">Other Properties</a>
+                            </div>
+                        </div>
                         <a href="?page=contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
