@@ -10,7 +10,7 @@
                     <div class="col-lg-6 text-start text-lg-end wow slideInRight" data-wow-delay="0.1s">
                         <ul class="nav nav-pills d-inline-flex justify-content-end mb-5">
                             <li class="nav-item me-2">
-                                <a class="btn btn-outline-primary active" data-bs-toggle="pill" href="#tab-1">Featured</a>
+                                <a class="btn btn-outline-primary active" data-bs-toggle="pill" href="#tab-1">Service Apartments</a>
                             </li>
                             <li class="nav-item me-2">
                                 <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-2">For Sell</a>
@@ -45,7 +45,7 @@
                             </div>
                             <?php $delay = ($delay < 0.5) ? ($delay + 0.2) : 0.1; endforeach; ?>
                             <div class="col-12 text-center wow fadeInUp" data-wow-delay="0.1s">
-                                <a class="btn btn-primary py-3 px-5" href="?page=property-list&view=<?= ($view + 1) ?>">Browse More Property</a>
+                                <a class="btn btn-primary py-3 px-5" href="?page=property-list&view=<?= ($view + 1) ?>">Browse More Apartments</a>
                             </div>
                         </div>
                     </div>

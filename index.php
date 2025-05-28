@@ -31,6 +31,7 @@ if ($service_apartments_count == 0) {
 define('ADDRESS', 'No. 55B Zazzau Road, Lagos, Nigeria');
 define('PHONE', '+2347016928568');
 define('EMAIL', 'info@arimoridgr.com.ng');
+define('WHATSAPP_LINK', 'https://wa.me/2347016928568');
 
 ?>
 
@@ -122,9 +123,8 @@ define('EMAIL', 'info@arimoridgr.com.ng');
                         <p class="mb-2"><i class="fa fa-phone-alt me-3"></i><?= PHONE ?></p>
                         <p class="mb-2"><i class="fa fa-envelope me-3"></i><?= EMAIL ?></p>
                         <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
                             <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
                             <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
                         </div>
                     </div>

@@ -148,7 +148,7 @@
                                     <h1 class="mb-3">Get Started Today</h1>
                                     <p>Whether you’re buying, renting, or investing, our team of licensed professionals is ready to guide you.</p>
                                 </div>
-                                <a href="tel:<?= PHONE ?>" class="btn btn-primary py-3 px-4 me-2"><i class="fa fa-phone-alt me-2"></i>Make A Call</a>
+                                <a href="<?= WHATSAPP_LINK ?>" class="btn btn-primary py-3 px-4 me-2"><i class="fa fa-whatsapp me-2"></i>Chat Us Now</a>
                                 <!-- <a href="" class="btn btn-dark py-3 px-4"><i class="fa fa-calendar-alt me-2"></i>Get Appoinment</a> -->
                             </div>
                         </div>
