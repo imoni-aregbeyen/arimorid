@@ -2,7 +2,7 @@
 require_once './config/db.php';
 session_start();
 $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
-$sitename = 'Arimorid Webhook';
+$sitename = 'Arimorid';
 
 $sql = "SELECT * FROM properties ORDER BY id DESC LIMIT 6 OFFSET 0";
 $qry = "SELECT * FROM service_apartments ORDER BY id DESC LIMIT 6 OFFSET 0";
