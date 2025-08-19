@@ -8,22 +8,17 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$id = (int)$_GET['id'] ?? NULL;
-$apartment = get_data("service_apartments", "WHERE id=$id")[0];
-$apartment['images'] = is_array($apartment['images']) ? $apartment['images'] : explode(',', $apartment['images']);
-$addons = get_data('addons');
-
-function show_error($message) {
-    return '<div class="alert alert-danger">Error: ' . htmlspecialchars($message) . '</div>';
-}
-
-// Handle booking request
+// Handle booking request - MUST BE AT THE TOP BEFORE ANY OUTPUT
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_now'])) {
     if (!isset($_SESSION['user_id'])) {
         header("Location: ./?page=login");
         exit;
     }
 
+    $id = (int)$_GET['id'] ?? NULL;
+    $apartment = get_data("service_apartments", "WHERE id=$id")[0];
+    $addons = get_data('addons');
+    
     // Calculate costs
     $days = max(1, (int)($_POST['days'] ?? 1));
     $listing_daily_charge = (float)$apartment['listing_daily_charge'];
@@ -55,6 +50,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_now'])) {
     // Redirect to payment processor
     header("Location: ./?page=process-payment");
     exit;
+}
+
+// Now get the apartment data for display
+$id = (int)$_GET['id'] ?? NULL;
+$apartment = get_data("service_apartments", "WHERE id=$id")[0];
+$apartment['images'] = is_array($apartment['images']) ? $apartment['images'] : explode(',', $apartment['images']);
+$addons = get_data('addons');
+
+function show_error($message) {
+    return '<div class="alert alert-danger">Error: ' . htmlspecialchars($message) . '</div>';
 }
 ?>
 
