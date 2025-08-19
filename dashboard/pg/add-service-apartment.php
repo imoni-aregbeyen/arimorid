@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $listing_daily_charge = $_POST['listing_daily_charge'];
     $service_charge = $_POST['service_charge'];
     $owner_id = $_POST['owner_id'];
+    $units = $_POST['units'];
     $images = [];
 
     // Handle file upload
@@ -39,13 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $images = implode(',', $images);
     }
 
-    $sql = "INSERT INTO service_apartments (images, address, title, owner_daily_charge, listing_daily_charge, service_charge, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO service_apartments (images, address, title, owner_daily_charge, listing_daily_charge, service_charge, owner_id, units) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     if ($stmt === false) {
         echo "<script>alert('Database error: Failed to prepare statement');</script>";
         exit;
     }
-    $stmt->bind_param("sssdddi",$images, $address, $title, $owner_daily_charge, $listing_daily_charge, $service_charge, $owner_id);
+    $stmt->bind_param("sssdddii",$images, $address, $title, $owner_daily_charge, $listing_daily_charge, $service_charge, $owner_id, $units);
     if (!$stmt->execute()) {
         echo "<script>alert('Database error: Failed to execute statement');</script>";
         $stmt->close();
@@ -103,6 +104,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <option value="<?= $owner['id'] ?>"><?= $owner['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
+            </div>
+            <div class="mb-3">
+                <label for="units" class="form-label">Unit(s)</label>
+                <input type="number" class="form-control" id="units" name="units" placeholder="Enter number of units" min="1" required>
             </div>
             <!-- VAT 7.5% of listing daily charge -->
             <button type="submit" class="btn btn-primary">Save</button>
