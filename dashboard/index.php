@@ -90,6 +90,14 @@ $user_role = $_SESSION['user_role'];
             <span class="pc-mtext">Service Apartments</span>
           </a>
         </li>
+        <?php if ($user_role == 'owner'): ?>
+        <li class="pc-item">
+          <a href="?page=withdraw" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-cash"></i></span>
+            <span class="pc-mtext">Withdraw</span>
+          </a>
+        </li>
+        <?php endif; ?>
         <?php if ($user_role == 'admin'): ?>
         <li class="pc-item">
           <a href="?page=owners" class="pc-link">
