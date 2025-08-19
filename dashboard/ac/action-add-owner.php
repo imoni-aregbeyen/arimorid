@@ -9,14 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Add new owner
         $name = test_input($_POST['name']);
         $phone = test_input($_POST['phone']);
-        $password = password_hash(test_input($_POST['phone']), PASSWORD_BCRYPT); // Hash the password
+        $password = password_hash($phone, PASSWORD_BCRYPT); // Hash the password
         $email = test_input($_POST['email']);
         $account_number = test_input($_POST['account_number']);
         $bank_name = test_input($_POST['bank_name']);
         $account_name = test_input($_POST['account_name']);
 
-        $stmt = $conn->prepare("INSERT INTO users (name, phone, email, account_number, bank_name, account_name, role) VALUES (?, ?, ?, ?, ?, ?, 'owner')");
-        $stmt->bind_param("ssssss", $name, $phone, $email, $account_number, $bank_name, $account_name);
+        $stmt = $conn->prepare("INSERT INTO users (name, password phone, email, account_number, bank_name, account_name, role) VALUES (?, ?, ?, ?, ?, ?, ?, 'owner')");
+        $stmt->bind_param("sssssss", $name, $password, $phone, $email, $account_number, $bank_name, $account_name);
 
         if ($stmt->execute()) {
             $owner_id = $conn->insert_id; // Get the ID of the newly created owner

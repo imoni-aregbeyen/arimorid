@@ -1,0 +1,258 @@
+<?php
+// print_r($_SESSION);
+// Array ( [user_id] => 1 
+// [user_role] => admin 
+// [user_verified] => 0 
+// [user_email] => admin@arimoridgr.com.ng 
+// [user_name] => Administrator 
+// [logged_in] => 1 )
+$user_id = $_SESSION['user_id'];
+$user_role = $_SESSION['user_role'];
+
+$sql = "SELECT * FROM users";
+$rs = $conn->query($sql);
+$users_rows = $rs->num_rows ?? 0;
+?>      
+      <!-- [ breadcrumb ] start -->
+      <div class="page-header">
+        <div class="page-block">
+          <div class="row align-items-center">
+            <div class="col-md-12">
+              <div class="page-header-title">
+                <h5 class="m-b-10">Home</h5>
+              </div>
+              <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="../dashboard/index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="javascript: void(0)">Dashboard</a></li>
+                <li class="breadcrumb-item" aria-current="page">Home</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- [ breadcrumb ] end -->
+      <!-- [ Main Content ] start -->
+      <div class="row">
+        <!-- [ sample-page ] start -->
+        <div class="col-md-6 col-xl-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="mb-2 f-w-400 text-muted">Total Users</h6>
+              <h4 class="mb-3"><?= number_format($users_rows) ?></h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="mb-2 f-w-400 text-muted">Total Order</h6>
+              <h4 class="mb-3">18,800</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="mb-2 f-w-400 text-muted">Total Sales</h6>
+              <h4 class="mb-3">&#8358;35,078</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="mb-2 f-w-400 text-muted">Total VAT</h6>
+              <h4 class="mb-3">&#8358;3,500</h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 col-xl-8">
+          <h5 class="mb-3">Recent Orders</h5>
+          <div class="card tbl-card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover table-borderless mb-0">
+                  <thead>
+                    <tr>
+                      <th>TRACKING NO.</th>
+                      <th>PRODUCT NAME</th>
+                      <th>TOTAL ORDER</th>
+                      <th>STATUS</th>
+                      <th class="text-end">TOTAL AMOUNT</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Camera Lens</td>
+                      <td>40</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-danger f-10 m-r-5"></i>Rejected</span>
+                      </td>
+                      <td class="text-end">$40,570</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Laptop</td>
+                      <td>300</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-warning f-10 m-r-5"></i>Pending</span>
+                      </td>
+                      <td class="text-end">$180,139</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Mobile</td>
+                      <td>355</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-success f-10 m-r-5"></i>Approved</span></td>
+                      <td class="text-end">$180,139</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Camera Lens</td>
+                      <td>40</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-danger f-10 m-r-5"></i>Rejected</span>
+                      </td>
+                      <td class="text-end">$40,570</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Laptop</td>
+                      <td>300</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-warning f-10 m-r-5"></i>Pending</span>
+                      </td>
+                      <td class="text-end">$180,139</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Mobile</td>
+                      <td>355</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-success f-10 m-r-5"></i>Approved</span></td>
+                      <td class="text-end">$180,139</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Camera Lens</td>
+                      <td>40</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-danger f-10 m-r-5"></i>Rejected</span>
+                      </td>
+                      <td class="text-end">$40,570</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Laptop</td>
+                      <td>300</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-warning f-10 m-r-5"></i>Pending</span>
+                      </td>
+                      <td class="text-end">$180,139</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Mobile</td>
+                      <td>355</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-success f-10 m-r-5"></i>Approved</span></td>
+                      <td class="text-end">$180,139</td>
+                    </tr>
+                    <tr>
+                      <td><a href="#" class="text-muted">84564564</a></td>
+                      <td>Mobile</td>
+                      <td>355</td>
+                      <td><span class="d-flex align-items-center gap-2"><i
+                            class="fas fa-circle text-success f-10 m-r-5"></i>Approved</span></td>
+                      <td class="text-end">$180,139</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 col-xl-4">
+          <h5 class="mb-3">Income Overview</h5>
+          <div class="card">
+            <div class="card-body">
+              <h6 class="mb-2 f-w-400 text-muted">This Week Statistics</h6>
+              <h3 class="mb-3">$7,650</h3>
+              <div id="income-overview-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 col-xl-8">
+          <h5 class="mb-3">Sales Report</h5>
+          <div class="card">
+            <div class="card-body">
+              <h6 class="mb-2 f-w-400 text-muted">This Week Statistics</h6>
+              <h3 class="mb-0">$7,650</h3>
+              <div id="sales-report-chart"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 col-xl-4">
+          <h5 class="mb-3">Transaction History</h5>
+          <div class="card">
+            <div class="list-group list-group-flush">
+              <a href="#" class="list-group-item list-group-item-action">
+                <div class="d-flex">
+                  <div class="flex-shrink-0">
+                    <div class="avtar avtar-s rounded-circle text-success bg-light-success">
+                      <i class="ti ti-gift f-18"></i>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <h6 class="mb-1">Order #002434</h6>
+                    <p class="mb-0 text-muted">Today, 2:00 AM</P>
+                  </div>
+                  <div class="flex-shrink-0 text-end">
+                    <h6 class="mb-1">+ $1,430</h6>
+                    <p class="mb-0 text-muted">78%</P>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action">
+                <div class="d-flex">
+                  <div class="flex-shrink-0">
+                    <div class="avtar avtar-s rounded-circle text-primary bg-light-primary">
+                      <i class="ti ti-message-circle f-18"></i>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <h6 class="mb-1">Order #984947</h6>
+                    <p class="mb-0 text-muted">5 August, 1:45 PM</P>
+                  </div>
+                  <div class="flex-shrink-0 text-end">
+                    <h6 class="mb-1">- $302</h6>
+                    <p class="mb-0 text-muted">8%</P>
+                  </div>
+                </div>
+              </a>
+              <a href="#" class="list-group-item list-group-item-action">
+                <div class="d-flex">
+                  <div class="flex-shrink-0">
+                    <div class="avtar avtar-s rounded-circle text-danger bg-light-danger">
+                      <i class="ti ti-settings f-18"></i>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <h6 class="mb-1">Order #988784</h6>
+                    <p class="mb-0 text-muted">7 hours ago</P>
+                  </div>
+                  <div class="flex-shrink-0 text-end">
+                    <h6 class="mb-1">- $682</h6>
+                    <p class="mb-0 text-muted">16%</P>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>

@@ -92,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="number" class="form-control" id="listingDailyCharge" name="listing_daily_charge" placeholder="Enter listing daily charge">
             </div>
             <div class="mb-3">
-                <label for="serviceCharge" class="form-label">Service Charge</label>
-                <input type="number" class="form-control" id="serviceCharge" name="service_charge" placeholder="Enter service charge">
+                <label for="serviceCharge" class="form-label">Caution Fee</label>
+                <input type="number" class="form-control" id="serviceCharge" name="service_charge" placeholder="Enter caution fee">
             </div>
             <div class="mb-3">
                 <label for="owner_id" class="form-label">Select Owner</label>
@@ -104,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <?php endforeach; ?>
                 </select>
             </div>
+            <!-- VAT 7.5% of listing daily charge -->
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
     </div>

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 require_once '../config/db.php';
 // Check if user is logged in
@@ -8,6 +9,15 @@ if (!isset($_SESSION['user_id'])) {
 }
 // Include database connection file
 $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
+
+// Array ( [user_id] => 1 
+// [user_role] => admin 
+// [user_verified] => 0 
+// [user_email] => admin@arimoridgr.com.ng 
+// [user_name] => Administrator 
+// [logged_in] => 1 )
+$user_id = $_SESSION['user_id'];
+$user_role = $_SESSION['user_role'];
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +35,7 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
   <meta name="author" content="CodedThemes">
 
   <!-- [Favicon] icon -->
-  <link rel="icon" href="../assets/images/favicon.svg" type="image/x-icon"> <!-- [Google Font] Family -->
+  <link rel="icon" href="../img/site-icon.png" type="image/x-icon"> <!-- [Google Font] Family -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" id="main-font-link">
 <!-- [Tabler Icons] https://tablericons.com -->
 <link rel="stylesheet" href="../assets/fonts/tabler-icons.min.css" >
@@ -80,6 +90,7 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
             <span class="pc-mtext">Service Apartments</span>
           </a>
         </li>
+        <?php if ($user_role == 'admin'): ?>
         <li class="pc-item">
           <a href="?page=owners" class="pc-link">
             <span class="pc-micon"><i class="ti ti-users"></i></span>
@@ -87,15 +98,34 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
           </a>
         </li>
         <li class="pc-item">
-          <a href="?page=orders" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-shopping-cart"></i></span>
-            <span class="pc-mtext">Orders</span>
+          <a href="?page=users" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-users"></i></span>
+            <span class="pc-mtext">Users</span>
           </a>
         </li>
         <li class="pc-item">
           <a href="?page=addons" class="pc-link">
             <span class="pc-micon"><i class="ti ti-list"></i></span>
             <span class="pc-mtext">Additional Services</span>
+          </a>
+        </li>
+        <?php endif; ?>
+        <li class="pc-item">
+          <a href="?page=orders" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-shopping-cart"></i></span>
+            <span class="pc-mtext">Orders</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="?page=transactions" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-credit-card"></i></span>
+            <span class="pc-mtext">Transactions</span>
+          </a>
+        </li>
+        <li class="pc-item">
+          <a href="?page=chat" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-messages"></i></span>
+            <span class="pc-mtext">Messages</span>
           </a>
         </li>
       </ul>
@@ -158,71 +188,64 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
         aria-haspopup="false"
         aria-expanded="false"
       >
-        <i class="ti ti-mail"></i>
+        <!-- <i class="ti ti-mail"></i> -->
       </a>
-      <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
+<li class="dropdown pc-h-item">
+    <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+        <i class="ti ti-message-circle"></i>
+        <?php 
+        $unread = $conn->query("SELECT COUNT(*) FROM messages WHERE receiver_id = {$_SESSION['user_id']} AND is_read = 0")->fetch_row()[0];
+        if ($unread > 0): ?>
+            <span class="badge bg-danger rounded-pill"><?= $unread ?></span>
+        <?php endif; ?>
+    </a>
+    <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
         <div class="dropdown-header d-flex align-items-center justify-content-between">
-          <h5 class="m-0">Message</h5>
-          <a href="#!" class="pc-head-link bg-transparent"><i class="ti ti-x text-danger"></i></a>
+            <h5 class="m-0">Messages</h5>
+            <a href="?page=chat" class="pc-head-link">View All</a>
         </div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 215px)">
-          <div class="list-group list-group-flush w-100">
-            <a class="list-group-item list-group-item-action">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <img src="../assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar">
+            <?php
+            $recent_messages = $conn->query("
+                SELECT m.*, u.name as sender_name 
+                FROM messages m
+                JOIN users u ON m.sender_id = u.id
+                WHERE m.receiver_id = {$_SESSION['user_id']}
+                ORDER BY m.created_at DESC LIMIT 5
+            ");
+            
+            if ($recent_messages->num_rows > 0): ?>
+                <div class="list-group list-group-flush w-100">
+                    <?php while($msg = $recent_messages->fetch_assoc()): ?>
+                        <a href="?page=chat&with=<?= $msg['sender_id'] ?>" class="list-group-item list-group-item-action">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <div class="avtar avtar-s rounded-circle bg-light-primary">
+                                        <i class="ti ti-user f-18"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-1">
+                                    <h6 class="mb-1"><?= htmlspecialchars($msg['sender_name']) ?></h6>
+                                    <p class="mb-0 text-muted"><?= htmlspecialchars(substr($msg['message'], 0, 50)) ?><?= strlen($msg['message']) > 50 ? '...' : '' ?></p>
+                                    <small class="text-muted"><?= date('M j, h:i A', strtotime($msg['created_at'])) ?></small>
+                                </div>
+                                <?php if (!$msg['is_read']): ?>
+                                    <span class="badge bg-danger rounded-pill">New</span>
+                                <?php endif; ?>
+                            </div>
+                        </a>
+                    <?php endwhile; ?>
                 </div>
-                <div class="flex-grow-1 ms-1">
-                  <span class="float-end text-muted">3:00 AM</span>
-                  <p class="text-body mb-1">It's <b>Cristina danny's</b> birthday today.</p>
-                  <span class="text-muted">2 min ago</span>
+            <?php else: ?>
+                <div class="text-center py-3">
+                    <i class="ti ti-message-off fs-4 text-muted"></i>
+                    <p class="mt-2">No messages yet</p>
                 </div>
-              </div>
-            </a>
-            <a class="list-group-item list-group-item-action">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <img src="../assets/images/user/avatar-1.jpg" alt="user-image" class="user-avtar">
-                </div>
-                <div class="flex-grow-1 ms-1">
-                  <span class="float-end text-muted">6:00 PM</span>
-                  <p class="text-body mb-1"><b>Aida Burg</b> commented your post.</p>
-                  <span class="text-muted">5 August</span>
-                </div>
-              </div>
-            </a>
-            <a class="list-group-item list-group-item-action">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <img src="../assets/images/user/avatar-3.jpg" alt="user-image" class="user-avtar">
-                </div>
-                <div class="flex-grow-1 ms-1">
-                  <span class="float-end text-muted">2:45 PM</span>
-                  <p class="text-body mb-1"><b>There was a failure to your setup.</b></p>
-                  <span class="text-muted">7 hours ago</span>
-                </div>
-              </div>
-            </a>
-            <a class="list-group-item list-group-item-action">
-              <div class="d-flex">
-                <div class="flex-shrink-0">
-                  <img src="../assets/images/user/avatar-4.jpg" alt="user-image" class="user-avtar">
-                </div>
-                <div class="flex-grow-1 ms-1">
-                  <span class="float-end text-muted">9:10 PM</span>
-                  <p class="text-body mb-1"><b>Cristina Danny </b> invited to join <b> Meeting.</b></p>
-                  <span class="text-muted">Daily scrum meeting time</span>
-                </div>
-              </div>
-            </a>
-          </div>
+            <?php endif; ?>
         </div>
-        <div class="dropdown-divider"></div>
-        <div class="text-center py-2">
-          <a href="#!" class="link-primary">View all</a>
-        </div>
-      </div>
+    </div>
+</li>
     </li>
     <li class="dropdown pc-h-item header-user-profile">
       <a
@@ -280,22 +303,18 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
         </ul>
         <div class="tab-content" id="mysrpTabContent">
           <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel" aria-labelledby="drp-t1" tabindex="0">
-            <a href="#!" class="dropdown-item">
+            <!-- <a href="#!" class="dropdown-item">
               <i class="ti ti-edit-circle"></i>
               <span>Edit Profile</span>
-            </a>
-            <a href="#!" class="dropdown-item">
+            </a> -->
+            <a href="./?page=profile" class="dropdown-item">
               <i class="ti ti-user"></i>
               <span>View Profile</span>
             </a>
-            <a href="#!" class="dropdown-item">
-              <i class="ti ti-clipboard-list"></i>
-              <span>Social Profile</span>
-            </a>
-            <a href="#!" class="dropdown-item">
+            <!-- <a href="#!" class="dropdown-item">
               <i class="ti ti-wallet"></i>
               <span>Billing</span>
-            </a>
+            </a> -->
             <a href="../ac/action-logout.php" class="dropdown-item">
               <i class="ti ti-power"></i>
               <span>Logout</span>
@@ -330,7 +349,7 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
 </div>
  </div>
 </header>
-<!-- [ Header ] end -->
+<!-- [ Header] end -->
 
 
 
@@ -397,3 +416,6 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
 <!-- [Body] end -->
 
 </html>
+<?php
+ob_end_flush();
+?>

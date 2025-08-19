@@ -1,24 +1,22 @@
 <?php
 try {
-    $sql = "SELECT * FROM users WHERE role='owner' ORDER BY created_at DESC LIMIT 12";
+    $sql = "SELECT * FROM users WHERE role='user' ORDER BY created_at DESC LIMIT 12";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $owners[] = $row;
+            $users[] = $row;
         }
     } else {
-        $owners = [];
+        $users = [];
     }
 } catch (mysqli_sql_exception $e) {
     die("Error: " . $e->getMessage());
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $phone = trim($_POST['phone']);
-    $password = $phone; // Use phone number as password
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
 
     // Check for duplicate entry
     $checkSql = "SELECT * FROM users WHERE email = ?";
@@ -30,28 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows > 0) {
         $error = "An owner with this email already exists.";
     } else {
-        // Insert new owner with password
-        $insertSql = "INSERT INTO users (name, email, phone, password, role) VALUES (?, ?, ?, ?, 'owner')";
+        // Insert new owner
+        $insertSql = "INSERT INTO users (name, email, phone, role) VALUES (?, ?, ?, 'owner')";
         $stmt = $conn->prepare($insertSql);
-        $stmt->bind_param("ssss", $name, $email, $phone, $hashed_password);
+        $stmt->bind_param("sss", $name, $email, $phone);
         if ($stmt->execute()) {
-            // Send email with credentials
-            $subject = "Your Owner Account Credentials";
-            $message = "Hello $name,\n\n";
-            $message .= "Your owner account has been created with the following credentials:\n";
-            $message .= "Email: $email\n";
-            $message .= "Temporary Password: $password\n\n";
-            $message .= "Please login and change your password immediately.\n\n";
-            $message .= "Login URL: ".$_SERVER['HTTP_HOST']."/?page=login";
-            
-            $headers = "From: no-reply@".$_SERVER['HTTP_HOST'];
-            
-            mail($email, $subject, $message, $headers);
-            
-            $success = "New owner added successfully. Login credentials sent to their email. The phone number is the password.";
+            $success = "New owner added successfully.";
             echo "<script>setTimeout(function(){ window.location.href = '?page=owners'; }, 2000);</script>";
         } else {
-            $error = "Failed to add owner: " . $conn->error;
+            $error = "Failed to add owner.";
         }
     }
 }
@@ -63,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="row align-items-center">
             <div class="col-md-12">
               <div class="page-header-title">
-                <h5 class="m-b-10">Owners</h5>
+                <h5 class="m-b-10">Users</h5>
               </div>
               <ul class="breadcrumb">
                 <li class="breadcrumb-item"><a href="./">Dashboard</a></li>
@@ -81,8 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-sm-12">
           <div class="card">
             <div class="card-header d-flex justify-content-between">
-              <h5>Owners</h5>
-              <button class="btn btn-sm btn-success float-right" data-toggle="modal" data-target="#addOwnerModal">New Owner</button>
+              <h5>Users</h5>
             </div>
             <div class="card-body">
               <?php if (isset($error)): ?>
@@ -112,15 +96,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   </tr>
                 </thead>
                 <tbody>
-                  <?php $sn = 1; foreach ($owners as $owner): ?>
+                  <?php $sn = 1; foreach ($users as $user): ?>
                     <tr>
                       <td><?= $sn++ ?></td>
-                      <td><?= $owner['name'] ?></td>
-                      <td><?= $owner['email'] ?></td>
-                      <td><?= $owner['phone'] ?></td>
+                      <td><?= $user['name'] ?></td>
+                      <td><?= $user['email'] ?></td>
+                      <td><?= $user['phone'] ?></td>
                       <td>
-                        <a href="?page=edit-owner&id=<?= $owner['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
-                        <a href="?page=delete-owner&id=<?= $owner['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this owner?');">Delete</a>
+                        <a href="?page=edit-owner&id=<?= $user['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="?page=delete-owner&id=<?= $user['id'] ?>" class="btn btn-sm btn-danger">Delete</a>
                       </td>
                     </tr>
                   <?php endforeach; ?>

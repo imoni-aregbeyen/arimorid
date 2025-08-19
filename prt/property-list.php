@@ -39,7 +39,7 @@
                                         
                                     </div>
                                     <div class="text-center p-3">
-                                        <a class="btn btn-outline-primary w-100 py-2 px-4" href="order.php?property_id=<?= $property['id'] ?>">Book Now</a>
+                                        <a class="btn btn-outline-primary w-100 py-2 px-4" href="?page=service-apartment-details&id=<?= $property['id'] ?>">Book Now</a>
                                     </div>
                                 </div>
                             </div>

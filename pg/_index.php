@@ -4,7 +4,7 @@
                 <div class="col-md-6 p-5 mt-lg-5">
                     <h1 class="display-5 animated fadeIn mb-4">Find Your <span class="text-primary">Perfect Property</span> With Confidence</h1>
                     <p class="animated fadeIn mb-4 pb-2">Discover transparent, trustworthy, and tailor-made real estate solutions. From modern apartments to commercial investments, Arimorid Global Resources connects you with the home or property you’ve always envisioned.</p>
-                    <a href="?page=service-apartments" class="btn btn-primary py-3 px-5 me-3 animated fadeIn"><?= $sitename ?> Service Apartments</a>
+                    <a href="?page=service-apartments" class="btn btn-primary py-3 px-5 me-3 animated fadeIn">See Service Apartments</a>
                 </div>
                 <div class="col-md-6 animated fadeIn">
                     <div class="owl-carousel header-carousel">

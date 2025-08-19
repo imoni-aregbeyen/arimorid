@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require_once '../config/db.php'; // Include database connection, test_input function, and other necessary files
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -36,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
         if ($emailCount > 0) {
-            die('Email already registered.');
+            $_SESSION['error'] = 'Email already registered.';
+            die(header('location: ' . $_SERVER['HTTP_REFERER']));
         }
 
         // Check if this is the first user
@@ -53,12 +56,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ssss", $name, $email, $password, $role);
         $stmt->execute();
         $stmt->close();
-
+        $_SESSION['temp_user'] = [
+            'name' => $name,
+            'email' => $email,
+            'role' => $role
+        ];
         // Redirect to login page
         header('Location: ../?page=login');
         exit;
     } catch (Exception $e) {
-        die('Error: ' . $e->getMessage());
+        $_SESSION['error'] = 'Registration failed: ' . $e->getMessage();
+        die(header('location: ' . $_SERVER['HTTP_REFERER']));
     }
 } else {
     die('Invalid request method.');

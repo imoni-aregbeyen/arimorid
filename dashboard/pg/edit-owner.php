@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("UPDATE users SET name = ?, email = ?, phone = ? WHERE id = ? AND role = 'owner'");
         $stmt->bind_param("sssi", $name, $email, $phone, $ownerId);
         if ($stmt->execute()) {
-            // header("Location: owners.php?message=Owner updated successfully");
-            // exit;
+            header("Location: ./?page=owners");
+            exit;
         } else {
             $error = "Failed to update owner.";
         }

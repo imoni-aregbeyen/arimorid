@@ -4,11 +4,13 @@ if ($_SERVER['HTTP_HOST'] === 'localhost') {
     $username = "root";
     $password = "";
     $dbname = "arimorid";
+    define('CALLBACK_URL', 'http://localhost/arimorid/?page=payment-callback');
 } else {
     $servername = "sdb-80.hosting.stackcp.net";
     $username = "arimoride-353038356e7a";
     $password = "01#Admin@arimoridgr";
     $dbname = "arimoride-353038356e7a";
+    define('CALLBACK_URL', 'https://arimoridgr.com.ng/?page=payment-callback');
 }
 
 try {
@@ -42,5 +44,16 @@ function test_input($data) {
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
+}
+
+function get_data($tbl, $whr = '') {
+  $conn = $GLOBALS['conn'];
+  $rs = $conn->query("SELECT * FROM $tbl $whr ORDER BY id DESC");
+  $num_rows = $rs->num_rows;
+  $data = [];
+  while ($row = $rs->fetch_assoc()) {
+    $data[] = $row;
+  }
+  return $data;
 }
 ?>

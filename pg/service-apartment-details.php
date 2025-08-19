@@ -1,70 +1,64 @@
 <?php
-// addons: id, service, price, created_at, updated_at
-// service_apartments: id, images(image1, image2), address, title, owner_daily_charge, listing_daily_charge, service_charge, created_at, updated_at
+// service-apartment-details.php
 
-if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-    $apartment_id = intval($_GET['id']);
-    $sql = "SELECT * FROM service_apartments WHERE id = $apartment_id";
-    $result = mysqli_query($conn, $sql);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-    if ($result && mysqli_num_rows($result) > 0) {
-        $apartment = mysqli_fetch_assoc($result);
-        $apartment['images'] = explode(',', $apartment['images']); // Split images into an array
-
-        // Fetch addons
-        $addons_sql = "SELECT * FROM addons";
-        $addons_result = mysqli_query($conn, $addons_sql);
-        $addons = [];
-        if ($addons_result && mysqli_num_rows($addons_result) > 0) {
-            while ($addon = mysqli_fetch_assoc($addons_result)) {
-                $addons[] = $addon;
-            }
-        }
-    } else {
-        echo "<p class='text-center'>Apartment not found.</p>";
-        exit;
-    }
-} else {
-    echo "<p class='text-center'>Invalid apartment ID.</p>";
-    exit;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if user is logged in
+$id = (int)$_GET['id'] ?? NULL;
+$apartment = get_data("service_apartments", "WHERE id=$id")[0];
+$apartment['images'] = is_array($apartment['images']) ? $apartment['images'] : explode(',', $apartment['images']);
+$addons = get_data('addons');
+
+function show_error($message) {
+    return '<div class="alert alert-danger">Error: ' . htmlspecialchars($message) . '</div>';
+}
+
+// Handle booking request
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_now'])) {
     if (!isset($_SESSION['user_id'])) {
         header("Location: ./?page=login");
         exit;
     }
 
-    // Handle booking logic here
-    $selected_addons = isset($_POST['addons']) ? $_POST['addons'] : [];
-    $apartment_id = $_POST['id'];
+    // Calculate costs
+    $days = max(1, (int)($_POST['days'] ?? 1));
+    $listing_daily_charge = (float)$apartment['listing_daily_charge'];
+    $service_charge = (float)$apartment['service_charge'];
+    $total_daily_charge = $listing_daily_charge * $days;
+    $addons_cost = 0;
+    $selected_addons = [];
+    
+    foreach ($addons as $addon) {
+        if (in_array($addon['id'], $_POST['addons'] ?? [])) {
+            $addons_cost += (float)$addon['price'];
+            $selected_addons[] = $addon['id'];
+        }
+    }
+    
+    $vat = $total_daily_charge * 0.075;
+    $total_cost = $total_daily_charge + $service_charge + $addons_cost + $vat;
 
-    // Process the booking with the selected addons
-    // For example, save to database or send confirmation email
-    // ...
-}   
+    // Store booking details in session
+    $_SESSION['pending_booking'] = [
+        'apartment_id' => $apartment['id'],
+        'days' => $days,
+        'addons' => $selected_addons,
+        'total_cost' => $total_cost,
+        'user_id' => $_SESSION['user_id'],
+        'user_email' => $_SESSION['user_email'] ?? 'customer@example.com'
+    ];
+
+    // Redirect to payment processor
+    header("Location: ./?page=process-payment");
+    exit;
+}
 ?>
 
-<style>
-    .carousel-inner img {
-        height: 500px; /* Set a fixed height */
-        object-fit: cover; /* Ensure the image covers the area without distortion */
-    }
-</style>
-
-<!-- Header Start -->
-<div class="container-fluid header bg-white p-0">
-    <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
-        <div class="col-md-12 pt-5 mt-lg-5">
-            <div class="my-5"></div>
-            <h1 class="display-5 animated fadeIn mb-4 text-center"><?php echo htmlspecialchars($apartment['title']); ?></h1>
-        </div>
-    </div>
-</div>
-<!-- Header End -->
-
-<!-- Apartment Details Section Start -->
+<!-- Apartment Details UI -->
 <div class="container py-5">
     <div class="row g-4">
         <div class="col-lg-8">
@@ -89,14 +83,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-lg-4">
             <h2 class="mb-3"><?php echo htmlspecialchars($apartment['title']); ?></h2>
             <p><strong>Address:</strong> <?php echo htmlspecialchars($apartment['address']); ?></p>
-            <p><strong>Listing Daily Charge:</strong> ₦<?php echo number_format(htmlspecialchars($apartment['listing_daily_charge']), 2); ?></p>
-            <p><strong>Caution Fee:</strong> ₦<?php echo number_format(htmlspecialchars($apartment['service_charge']), 2); ?></p>
-            
-            <!-- Available Services Section -->
-            <?php if (!empty($addons)): ?>
-                <div class="mt-4">
-                    <h4>Available Services</h4>
-                    <form method="GET" action="./?=booking">
+            <p><strong>Listing Daily Charge:</strong> ₦<?php echo number_format($apartment['listing_daily_charge'], 2); ?></p>
+            <p><strong>Caution Fee:</strong> ₦<?php echo number_format($apartment['service_charge'], 2); ?></p>
+            <form method="POST" action="" id="booking-form">
+                <div class="mb-3">
+                    <label for="days" class="form-label"><strong>Number of Days:</strong></label>
+                    <input type="number" id="days" name="days" class="form-control" value="1" min="1">
+                </div>
+                <?php if (!empty($addons)): ?>
+                    <div class="mb-3">
+                        <h4>Available Services</h4>
                         <?php foreach ($addons as $addon): ?>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="addons[]" value="<?php echo $addon['id']; ?>" id="addon-<?php echo $addon['id']; ?>" data-price="<?php echo $addon['price']; ?>">
@@ -105,111 +101,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </label>
                             </div>
                         <?php endforeach; ?>
-                    </form>
+                    </div>
+                <?php endif; ?>
+                <div class="d-flex justify-content-between">
+                    <p><strong>Total Daily Charge:</strong></p>
+                    <p id="total-daily-charge">₦<?php echo number_format($apartment['listing_daily_charge'], 2); ?></p>
                 </div>
-            <?php endif; ?>
-
-            <!-- Total and VAT Section -->
-            <div class="mt-4">
-                <h4>Total Cost</h4>
-                <div class="card p-3">
-                    <div class="mb-3">
-                        <label for="days" class="form-label"><strong>Number of Days:</strong></label>
-                        <input type="number" id="days" class="form-control" value="1" min="1" form="booking-form">
-                    </div>
-                    <?php
-                    $base_cost = $apartment['listing_daily_charge'] + $apartment['service_charge'];
-                    $vat = $base_cost * 0.075;
-                    $total_cost = $base_cost + $vat;
-                    ?>
-                    <div class="d-flex justify-content-between">
-                        <p><strong>Listing Daily Charge:</strong></p>
-                        <p>₦<?php echo number_format($apartment['listing_daily_charge'], 2); ?></p>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <p><strong>Caution Fee:</strong></p>
-                        <p>₦<?php echo number_format($apartment['service_charge'], 2); ?></p>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <p><strong>Services:</strong></p>
-                        <p id="addons-cost">₦0.00</p>
-                    </div>
-                    <div class="small text-muted" id="addons-list"></div>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <p><strong>Base Cost:</strong></p>
-                        <p id="base-cost">₦<?php echo number_format($base_cost, 2); ?></p>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <p><strong>VAT (7.5%):</strong></p>
-                        <p id="vat">₦<?php echo number_format($vat, 2); ?></p>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <p><strong>Total Cost:</strong></p>
-                        <p id="total-cost" class="fw-bold">₦<?php echo number_format($total_cost, 2); ?></p>
-                    </div>
-                    <hr>
-                    <!-- Book Now Button -->
-                    <?php if (!empty($addons)): ?>
-                        <form method="POST" action="" id="booking-form">
-                            <?php foreach ($addons as $addon): ?>
-                                <input type="hidden" name="addons[]" value="<?php echo $addon['id']; ?>">
-                            <?php endforeach; ?>
-                            <input type="hidden" name="id" value="<?php echo $apartment_id; ?>">
-                            <button type="submit" class="btn btn-primary w-100">Book Now</button>
-                        </form>
-                    <?php else: ?>
-                        <a href="./?=booking&id=<?php echo $apartment_id; ?>" class="btn btn-primary w-100">Book Now</a>
-                    <?php endif; ?>
+                <div class="d-flex justify-content-between">
+                    <p><strong>Caution Fee:</strong></p>
+                    <p>₦<?php echo number_format($apartment['service_charge'], 2); ?></p>
                 </div>
-            </div>
+                <div class="d-flex justify-content-between">
+                    <p><strong>Services:</strong></p>
+                    <p id="addons-cost">₦0.00</p>
+                </div>
+                <div class="small text-muted" id="addons-list"></div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <p><strong>VAT (7.5%):</strong></p>
+                    <p id="vat">₦<?php echo number_format($apartment['listing_daily_charge'] * 0.075, 2); ?></p>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <p><strong>Total Cost:</strong></p>
+                    <p id="total-cost" class="fw-bold">₦<?php echo number_format($apartment['listing_daily_charge'] + $apartment['service_charge'] + ($apartment['listing_daily_charge'] * 0.075), 2); ?></p>
+                </div>
+                <hr>
+                <button type="submit" name="book_now" class="btn btn-primary w-100 mt-3">Proceed to Payment</button>
+            </form>
         </div>
     </div>
 </div>
-<!-- Apartment Details Section End -->
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const addons = document.querySelectorAll('.form-check-input');
-        const addonsCostElement = document.querySelector('#addons-cost');
-        const addonsListElement = document.querySelector('#addons-list');
-        const baseCostElement = document.querySelector('#base-cost');
-        const vatElement = document.querySelector('#vat');
-        const totalCostElement = document.querySelector('#total-cost');
-        const daysInput = document.querySelector('#days');
+document.addEventListener('DOMContentLoaded', function () {
+    const addons = document.querySelectorAll('.form-check-input');
+    const addonsCostElement = document.querySelector('#addons-cost');
+    const addonsListElement = document.querySelector('#addons-list');
+    const totalDailyChargeElement = document.querySelector('#total-daily-charge');
+    const vatElement = document.querySelector('#vat');
+    const totalCostElement = document.querySelector('#total-cost');
+    const daysInput = document.querySelector('#days');
 
-        const dailyListingCharge = parseFloat(<?php echo $apartment['listing_daily_charge']; ?>);
-        const serviceCharge = parseFloat(<?php echo $apartment['service_charge']; ?>);
-        const vatRate = 0.075;
+    const dailyListingCharge = <?php echo (float)$apartment['listing_daily_charge']; ?>;
+    const serviceCharge = <?php echo (float)$apartment['service_charge']; ?>;
+    const vatRate = 0.075;
 
-        function updateTotalCost() {
-            const days = parseInt(daysInput.value) || 1;
-            let addonsCost = 0;
-            let selectedAddons = [];
-
-            addons.forEach(addon => {
-                if (addon.checked) {
-                    addonsCost += parseFloat(addon.dataset.price);
-                    selectedAddons.push(addon.nextElementSibling.textContent.trim());
-                }
-            });
-
-            const newBaseCost = (dailyListingCharge * days) + serviceCharge + addonsCost;
-            const newVat = newBaseCost * vatRate;
-            const newTotalCost = newBaseCost + newVat;
-
-            addonsCostElement.textContent = `₦${addonsCost.toFixed(2)}`;
-            addonsListElement.textContent = selectedAddons.length > 0 ? selectedAddons.join(', ') : 'None';
-            baseCostElement.textContent = `₦${newBaseCost.toFixed(2)}`;
-            vatElement.textContent = `₦${newVat.toFixed(2)}`;
-            totalCostElement.textContent = `₦${newTotalCost.toFixed(2)}`;
-        }
+    function updateTotalCost() {
+        const days = parseInt(daysInput.value) || 1;
+        let addonsCost = 0;
+        let selectedAddons = [];
 
         addons.forEach(addon => {
-            addon.addEventListener('change', updateTotalCost);
+            if (addon.checked) {
+                addonsCost += parseFloat(addon.dataset.price);
+                selectedAddons.push(addon.nextElementSibling.textContent.trim());
+            }
         });
 
-        daysInput.addEventListener('input', updateTotalCost);
+        const totalDailyCharge = dailyListingCharge * days;
+        const vat = totalDailyCharge * vatRate;
+        const totalCost = totalDailyCharge + serviceCharge + addonsCost + vat;
+
+        totalDailyChargeElement.textContent = `₦${totalDailyCharge.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+        addonsCostElement.textContent = `₦${addonsCost.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+        addonsListElement.textContent = selectedAddons.length > 0 ? selectedAddons.join(', ') : 'None';
+        vatElement.textContent = `₦${vat.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+        totalCostElement.textContent = `₦${totalCost.toLocaleString(undefined, {minimumFractionDigits:2})}`;
+    }
+
+    addons.forEach(addon => {
+        addon.addEventListener('change', updateTotalCost);
     });
+
+    daysInput.addEventListener('input', updateTotalCost);
+    updateTotalCost(); // Initial calculation
+});
 </script>
