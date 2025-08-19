@@ -2,7 +2,7 @@
 require_once './config/db.php';
 session_start();
 $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
-$sitename = 'Arimorid';
+$sitename = 'Arimorid Webhook';
 
 $sql = "SELECT * FROM properties ORDER BY id DESC LIMIT 6 OFFSET 0";
 $qry = "SELECT * FROM service_apartments ORDER BY id DESC LIMIT 6 OFFSET 0";
@@ -90,7 +90,7 @@ define('PK_TEST', 'pk_test_4f31d372e25d6f5fcd353355655b63ea343fbf9c');
                     <div class="icon p-2 me-2">
                         <img class="img-fluid" src="img/site-icon.png" alt="Icon" style="width: 30px; height: 30px;">
                     </div>
-                    <h1 class="m-0 text-primary">Arimorid</h1>
+                    <h1 class="m-0 text-primary"><?= $sitename ?></h1>
                 </a>
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
