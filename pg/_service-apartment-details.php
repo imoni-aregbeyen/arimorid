@@ -1,52 +1,23 @@
 <?php
 // service-apartment-details.php
 
-// If this is a POST request, handle it and exit
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_now'])) {
-    handleBookingRequest();
-    // handleBookingRequest() will call header() and exit if needed
-    // If we get here, it means we should show the form
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-function handleBookingRequest() {
+// Handle booking request - MUST BE AT THE TOP BEFORE ANY OUTPUT
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_now'])) {
     if (!isset($_SESSION['user_id'])) {
         header("Location: ./?page=login");
         exit;
     }
 
-    $id = (int)($_GET['id'] ?? NULL);
-    if (!$id) {
-        return; // Return instead of die to show error on page
-    }
+    $id = (int)$_GET['id'] ?? NULL;
+    $apartment = get_data("service_apartments", "WHERE id=$id")[0];
     
-    $apartment = get_data("service_apartments", "WHERE id=$id")[0] ?? null;
-    if (!$apartment) {
-        return; // Return instead of die
-    }
-    
-    $units = (int)($apartment['units'] ?? 1);
-    $check_in = $_POST['check_in'] ?? '';
-    $check_out = $_POST['check_out'] ?? '';
-    
-    if ($check_in && $check_out) {
-        $sql = "SELECT COUNT(*) as count FROM bookings WHERE apartment_id = ? AND (
-            (check_in <= ? AND check_out > ?) OR
-            (check_in < ? AND check_out >= ?) OR
-            (check_in >= ? AND check_out <= ?)
-        )"; $conn = $GLOBALS['conn'];
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("issssss", $id, $check_in, $check_in, $check_out, $check_out, $check_in, $check_out);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $clash_count = (int)$row['count'];
-        if ($clash_count >= $units) {
-            $_SESSION['booking_error'] = "Selected dates are fully booked. Please choose different dates.";
-            header("Location: ./?page=service-apartment-details&id=$id");
-            exit;
-        }
-    }
-
     // Calculate costs
     $days = max(1, (int)($_POST['days'] ?? 1));
     $listing_daily_charge = (float)$apartment['listing_daily_charge'];
@@ -61,28 +32,17 @@ function handleBookingRequest() {
         'days' => $days,
         'total_cost' => $total_cost,
         'user_id' => $_SESSION['user_id'],
-        'user_email' => $_SESSION['user_email'] ?? 'customer@example.com',
-        'check_in' => $check_in,
-        'check_out' => $check_out
+        'user_email' => $_SESSION['user_email'] ?? 'customer@example.com'
     ];
 
+    // Redirect to payment processor
     header("Location: ./?page=process-payment");
     exit;
 }
 
-// Normal page display logic continues below...
-$id = (int)($_GET['id'] ?? NULL);
-if (!$id) {
-    echo show_error("Invalid apartment ID");
-    return;
-}
-
-$apartment = get_data("service_apartments", "WHERE id=$id")[0] ?? null;
-if (!$apartment) {
-    echo show_error("Apartment not found");
-    return;
-}
-
+// Now get the apartment data for display
+$id = (int)$_GET['id'] ?? NULL;
+$apartment = get_data("service_apartments", "WHERE id=$id")[0];
 $apartment['images'] = is_array($apartment['images']) ? $apartment['images'] : explode(',', $apartment['images']);
 
 function show_error($message) {
@@ -92,11 +52,6 @@ function show_error($message) {
 
 <!-- Apartment Details UI -->
 <div class="container py-5">
-    <?php if (isset($_SESSION['booking_error'])): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($_SESSION['booking_error']); ?></div>
-        <?php unset($_SESSION['booking_error']); ?>
-    <?php endif; ?>
-    
     <div class="row g-4">
         <div class="col-lg-8">
             <div id="apartmentCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -123,7 +78,6 @@ function show_error($message) {
             <p><strong>Listing Daily Charge:</strong> ₦<?php echo number_format($apartment['listing_daily_charge'], 2); ?></p>
             <p><strong>Caution Fee:</strong> ₦<?php echo number_format($apartment['service_charge'], 2); ?></p>
             <form method="POST" action="" id="booking-form">
-                <input type="hidden" name="id" value="<?php echo $id; ?>">
                 <div class="row mb-3">
                     <div class="col-lg">
                         <label for="checkIn" class="form-label">Check In</label>

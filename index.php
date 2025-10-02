@@ -1,8 +1,8 @@
 <?php
 ob_start();
+session_start();
 
 require_once './config/db.php';
-session_start();
 
 $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
 $sitename = 'Arimorid';
