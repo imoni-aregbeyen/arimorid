@@ -22,15 +22,15 @@ $apartments = $properties;
 <div class="container py-5">
     <div class="row g-4">
         <?php if (!empty($apartments)): ?>
-            <?php foreach ($apartments as $apartment): ?>
+            <?php foreach ($apartments as $apartment): $images = json_decode($apartment['images']); ?>
                 <div class="col-lg-4 col-md-6">
                     <div class="card border-0 shadow-sm">
-                        <img src="./uploads/<?php echo htmlspecialchars($apartment['images'][0]); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($apartment['title']); ?>">
+                        <img src="./uploads/properties/<?php echo $images[0]; ?>" class="card-img-top" alt="<?php echo htmlspecialchars($apartment['title']); ?>">
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($apartment['title']); ?></h5>
                             <p class="card-text"><?php echo htmlspecialchars($apartment['address']); ?></p>
                             <p class="card-text">Daily Charge: ₦<?php echo number_format(htmlspecialchars($apartment['listing_price']), 2); ?></p>
-                            <a href="./?page=service-apartment-details&id=<?= $apartment['id'] ?>" class="btn btn-primary">View Details</a>
+                            <a href="./?page=other-apartment-details&id=<?= $apartment['id'] ?>" class="btn btn-primary">View Details</a>
                         </div>
                     </div>
                 </div>
