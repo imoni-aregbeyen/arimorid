@@ -26,10 +26,10 @@
             </div>
             <div class="card-body">
               <form action="./ac/action-add-property.php" method="POST" enctype="multipart/form-data">
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label for="propertyType">Property Type</label>
                   <select class="form-control" id="propertyType" name="propertyType" required>
-                    <option value="Apartment">Apartment</option>
+                    <option value="Apartment" selected>Apartment</option>
                     <option value="Villa">Villa</option>
                     <option value="Home">Home</option>
                     <option value="Office">Office</option>
@@ -38,7 +38,8 @@
                     <option value="Shop">Shop</option>
                     <option value="Garage">Garage</option>
                   </select>
-                </div>
+                </div> -->
+                <input type="hidden" name="propertyType" value="Apartment">
                 <div class="form-group">
                   <label for="forSellRent">For Sell / For Rent</label>
                   <select class="form-control" id="forSellRent" name="forSellRent" required>
@@ -50,10 +51,10 @@
                   <label for="images">Image(s)</label>
                   <input type="file" class="form-control" id="images" name="images[]" multiple required>
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label for="ownerPrice">Owner Price</label>
                   <input type="number" class="form-control" id="ownerPrice" name="ownerPrice" required>
-                </div>
+                </div> -->
                 <div class="form-group">
                   <label for="listingPrice">Listing Price</label>
                   <input type="number" class="form-control" id="listingPrice" name="listingPrice" required>
@@ -66,7 +67,7 @@
                   <label for="address">Address</label>
                   <input type="text" class="form-control" id="address" name="address" required>
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label for="sqft">Sqft</label>
                   <input type="number" class="form-control" id="sqft" name="sqft" required>
                 </div>
@@ -77,7 +78,7 @@
                 <div class="form-group">
                   <label for="bath">Bath</label>
                   <input type="number" class="form-control" id="bath" name="bath" required>
-                </div>
+                </div> -->
                 <button type="submit" class="btn btn-primary">Add Property</button>
               </form>
             </div>
