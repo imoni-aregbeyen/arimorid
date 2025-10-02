@@ -29,7 +29,7 @@ $apartments = $properties;
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($apartment['title']); ?></h5>
                             <p class="card-text"><?php echo htmlspecialchars($apartment['address']); ?></p>
-                            <p class="card-text">Daily Charge: ₦<?php echo number_format(htmlspecialchars($apartment['listing_price']), 2); ?></p>
+                            <p class="card-text">Listing Price: ₦<?php echo number_format(htmlspecialchars($apartment['listing_price']), 2); ?></p>
                             <a href="./?page=other-apartment-details&id=<?= $apartment['id'] ?>" class="btn btn-primary">View Details</a>
                         </div>
                     </div>

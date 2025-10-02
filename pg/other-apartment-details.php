@@ -40,14 +40,13 @@ if ($result && $result->num_rows > 0) {
         </div>
         <div class="col-lg-4">
             <h2 class="mb-3"><?php echo htmlspecialchars($apartment['title']); ?></h2>
-            <p><strong>Address:</strong> <?php echo htmlspecialchars($apartment['address']); ?></p>
-            <p><strong>Type:</strong> <?php echo htmlspecialchars($apartment['property_type']); ?></p>
+            <p><strong>Details:</strong> <?php echo htmlspecialchars($apartment['address']); ?></p>
+            <!-- <p><strong>Type:</strong> <?php echo htmlspecialchars($apartment['property_type']); ?></p> -->
             <p><strong>For:</strong> <?php echo htmlspecialchars($apartment['for_sell_rent']); ?></p>
-            <?php if (!empty($apartment['owner_price'])): ?>
-                <p><strong>Owner Price:</strong> ₦<?php echo number_format($apartment['owner_price'], 2); ?></p>
-            <?php endif; ?>
+            
             <p><strong>Listing Price:</strong> ₦<?php echo number_format($apartment['listing_price'], 2); ?></p>
             <p><strong>Date Listed:</strong> <?php echo date('M j, Y', strtotime($apartment['created_at'])); ?></p>
+            <p class=""><a href="?page=contact" class="btn btn-primary px-4">Contact Us</a></p>
         </div>
     </div>
 </div>
