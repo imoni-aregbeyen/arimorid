@@ -118,16 +118,68 @@ try {
     }
     
     if ($stmt->affected_rows > 0) {
-        // Clear session
         unset($_SESSION['pending_booking']);
-        
-        // Show success message
-        echo show_success("Booking and payment successful! Reference: " . htmlspecialchars($reference));
-        
-        // Add link to view booking or return home
-        echo '<div class="text-center mt-3">';
-        echo '<a href="./" class="btn btn-primary">Return Home</a>';
+        // Show booking receipt
+        echo '<div class="container py-5"><div class="card mx-auto" style="max-width:500px;">';
+        echo '<div class="card-header bg-primary text-white text-center">
+        <img class="img-fluid" src="img/site-icon.png" alt="Icon" style="width: 30px; height: 30px;">
+        <h4 class="text-light">Booking Receipt</h4>
+        </div>';
+        echo '<div class="card-body">';
+        echo '<p><strong>Payment Reference:</strong> ' . htmlspecialchars($reference) . '</p>';
+        echo '<p><strong>Apartment:</strong> ' . htmlspecialchars($apartment['title']) . '</p>';
+        echo '<p><strong>Address:</strong> ' . htmlspecialchars($apartment['address']) . '</p>';
+        echo '<p><strong>Check-in:</strong> ' . htmlspecialchars($booking_data['check_in'] ?? '-') . '</p>';
+        echo '<p><strong>Check-out:</strong> ' . htmlspecialchars($booking_data['check_out'] ?? '-') . '</p>';
+        echo '<p><strong>Number of Days:</strong> ' . htmlspecialchars($days) . '</p>';
+        echo '<hr>';
+        echo '<p><strong>Daily Charge:</strong> ₦' . number_format($listing_daily_charge, 2) . '</p>';
+        echo '<p><strong>Caution Fee:</strong> ₦' . number_format($service_charge, 2) . '</p>';
+        echo '<p><strong>VAT (7.5%):</strong> ₦' . number_format($vat, 2) . '</p>';
+        echo '<p><strong>Total Cost:</strong> <span class="fw-bold">₦' . number_format($total_cost, 2) . '</span></p>';
         echo '</div>';
+        echo '<div class="card-footer text-center">';
+        echo '<button class="btn btn-success me-2" onclick="printReceipt()">Download Receipt</button>';
+        echo '<a href="./" class="btn btn-primary">Return Home</a>';
+        echo '</div></div></div>';
+        
+        // Fixed JavaScript for printing
+        echo '<script>
+        function printReceipt() {
+            // Create a clone of the receipt card
+            const receipt = document.querySelector(".card.mx-auto").cloneNode(true);
+            
+            // Create a print-friendly window
+            const printWindow = window.open("", "_blank");
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Booking Receipt</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <style>
+                        @media print {
+                            body { margin: 0; padding: 20px; }
+                            .btn { display: none !important; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+            `);
+            printWindow.document.write(receipt.outerHTML);
+            printWindow.document.write(`
+                    </div>
+                    <div class="text-center mt-3">
+                        <button onclick="window.print()" class="btn btn-primary me-2">Print</button>
+                        <button onclick="window.close()" class="btn btn-secondary">Close</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+        </script>';
     } else {
         throw new Exception("No rows affected - booking not saved");
     }
