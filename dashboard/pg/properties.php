@@ -47,10 +47,8 @@ try {
                     <th></th>
                     <th>Images</th>
                     <th>Property</th>
-                    <th>Owner</th>
-                    <th>Address</th>
+                    <th>Details</th>
                     <th>Price (&#8358;)</th>
-                    <th>Features</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -68,10 +66,7 @@ try {
                       </td>
                       <td>
                         <h5 class=""><?= $property['title'] ?></h5>
-                        <p class=""><?= $property['property_type'] ?></p>
-                      </td>
-                      <td>
-                        <p class=""><?= $property['owner_name'] ?></p>
+                        <!-- <p class=""><?= $property['property_type'] ?></p> -->
                       </td>
                       <td>
                         <p class=""><?= $property['address'] ?></p>
@@ -80,19 +75,12 @@ try {
                         <p class=""><?= number_format($property['listing_price']) ?></p>
                       </td>
                       <td>
-                        <p class="">
-                          <?= number_format($property['sqft']) ?> sqft <br>
-                          <?= $property['bed'] ?> bed <br>
-                          <?= $property['bath'] ?> bath <br>
-                        </p>
-                      </td>
-                      <td>
                         <?php if ($property['owner_id'] == 0): ?>
-                          <a href="?page=add-owner&id=<?= $property['id'] ?>" class="btn btn-warning btn-sm">Add Owner</a>
+                          <!-- <a href="?page=add-owner&id=<?= $property['id'] ?>" class="btn btn-warning btn-sm">Add Owner</a> -->
                           <a href="?page=edit-property&id=<?= $property['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
                           <a href="?page=delete-property&id=<?= $property['id'] ?>" class="btn btn-danger btn-sm">&times;</a>
                         <?php else: ?>
-                          <a href="?page=update-owner&id=<?= $property['id'] ?>" class="btn btn-outline-warning btn-sm">Owner</a>
+                          <!-- <a href="?page=update-owner&id=<?= $property['id'] ?>" class="btn btn-outline-warning btn-sm">Owner</a> -->
                           <a href="?page=edit-property&id=<?= $property['id'] ?>" class="btn btn-primary btn-sm">Edit</a>
                           <a href="?page=delete-property&id=<?= $property['id'] ?>" class="btn btn-danger btn-sm">Delete</a>
                           <!-- <a href="?page=property&id=<?= $property['id'] ?>" class="btn btn-info btn-sm">View</a> -->

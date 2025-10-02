@@ -47,19 +47,7 @@ if ($id) {
             <div class="card-body">
               <form action="./ac/action-edit-property.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="id" value="<?= $property['id'] ?>">
-                <div class="form-group">
-                  <label for="propertyType">Property Type</label>
-                  <select class="form-control" id="propertyType" name="propertyType" required>
-                    <option value="Apartment" <?= $property['property_type'] === 'Apartment' ? 'selected' : '' ?>>Apartment</option>
-                    <option value="Villa" <?= $property['property_type'] === 'Villa' ? 'selected' : '' ?>>Villa</option>
-                    <option value="Home" <?= $property['property_type'] === 'Home' ? 'selected' : '' ?>>Home</option>
-                    <option value="Office" <?= $property['property_type'] === 'Office' ? 'selected' : '' ?>>Office</option>
-                    <option value="Building" <?= $property['property_type'] === 'Building' ? 'selected' : '' ?>>Building</option>
-                    <option value="Townhouse" <?= $property['property_type'] === 'Townhouse' ? 'selected' : '' ?>>Townhouse</option>
-                    <option value="Shop" <?= $property['property_type'] === 'Shop' ? 'selected' : '' ?>>Shop</option>
-                    <option value="Garage" <?= $property['property_type'] === 'Garage' ? 'selected' : '' ?>>Garage</option>
-                  </select>
-                </div>
+                <input type="hidden" name="propertyType" value="<?= $property['property_type'] ?>">
                 <div class="form-group">
                   <label for="forSellRent">For Sell / For Rent</label>
                   <select class="form-control" id="forSellRent" name="forSellRent" required>
@@ -83,32 +71,16 @@ if ($id) {
                   <input type="file" class="form-control" id="images" name="images[]" multiple>
                 </div>
                 <div class="form-group">
-                  <label for="ownerPrice">Owner Price</label>
-                  <input type="number" class="form-control" id="ownerPrice" name="ownerPrice" value="<?= $property['owner_price'] ?>" required>
-                </div>
-                <div class="form-group">
                   <label for="listingPrice">Listing Price</label>
-                  <input type="number" class="form-control" id="listingPrice" name="listingPrice" value="<?= $property['listing_price'] ?>" required>
+                  <input type="text" class="form-control" id="listingPrice" name="listingPrice" value="<?= $property['listing_price'] ?>" required>
                 </div>
                 <div class="form-group">
                   <label for="title">Title</label>
                   <input type="text" class="form-control" id="title" name="title" value="<?= $property['title'] ?>" required>
                 </div>
                 <div class="form-group">
-                  <label for="address">Address</label>
+                  <label for="address">Details</label>
                   <input type="text" class="form-control" id="address" name="address" value="<?= $property['address'] ?>" required>
-                </div>
-                <div class="form-group">
-                  <label for="sqft">Sqft</label>
-                  <input type="number" class="form-control" id="sqft" name="sqft" value="<?= $property['sqft'] ?>" required>
-                </div>
-                <div class="form-group">
-                  <label for="bed">Bed</label>
-                  <input type="number" class="form-control" id="bed" name="bed" value="<?= $property['bed'] ?>" required>
-                </div>
-                <div class="form-group">
-                  <label for="bath">Bath</label>
-                  <input type="number" class="form-control" id="bath" name="bath" value="<?= $property['bath'] ?>" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Update Property</button>
               </form>

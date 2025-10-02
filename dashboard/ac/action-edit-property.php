@@ -16,13 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $images = json_decode($property['images'], true);
     $propertyType = test_input($_POST['propertyType']);
     $forSellRent = test_input($_POST['forSellRent']);
-    $ownerPrice = test_input($_POST['ownerPrice']);
     $listingPrice = test_input($_POST['listingPrice']);
     $title = test_input($_POST['title']);
     $address = test_input($_POST['address']);
-    $sqft = test_input($_POST['sqft']);
-    $bed = test_input($_POST['bed']);
-    $bath = test_input($_POST['bath']);
     if (!empty($_FILES['images']['name'][0])) {
         $uploadDir = '../../uploads/properties/';
         if (!is_dir($uploadDir)) {
@@ -47,9 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    $sql = "UPDATE properties SET property_type = ?, for_sell_rent = ?, owner_price = ?, listing_price = ?, title = ?, address = ?, sqft = ?, bed = ?, bath = ? WHERE id = ?";
+    $sql = "UPDATE properties SET property_type = ?, for_sell_rent = ?, listing_price = ?, title = ?, address = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssddsssdii", $propertyType, $forSellRent, $ownerPrice, $listingPrice, $title, $address, $sqft, $bed, $bath, $id);
+    $stmt->bind_param("ssdssi", $propertyType, $forSellRent, $listingPrice, $title, $address, $id);
     if ($stmt->execute()) {
         header('Location: ../?page=properties&status=success');
         exit();

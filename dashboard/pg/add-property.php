@@ -64,8 +64,8 @@
                   <input type="text" class="form-control" id="title" name="title" required>
                 </div>
                 <div class="form-group">
-                  <label for="address">Address</label>
-                  <input type="text" class="form-control" id="address" name="address" required>
+                  <label for="address">Details</label>
+                  <input type="text" class="form-control" id="address" name="address" placeholder="eg. Location" required>
                 </div>
                 <!-- <div class="form-group">
                   <label for="sqft">Sqft</label>
