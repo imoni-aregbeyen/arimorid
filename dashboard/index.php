@@ -90,19 +90,29 @@ $user_role = $_SESSION['user_role'];
           </a>
         </li>
         <li class="pc-item">
+          <?php if ($user_role != 'owner'): ?>
           <a href="?page=properties" class="pc-link">
             <span class="pc-micon"><i class="ti ti-building"></i></span>
             <span class="pc-mtext">Other Properties</span>
           </a>
+          <?php endif; ?>
         </li>
-        <?php if ($user_role == 'owner'): ?>
         <li class="pc-item">
+          <?php if ($user_role != 'owner'): ?>
+          <a href="?page=orders" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-shopping-cart"></i></span>
+            <span class="pc-mtext">Orders</span>
+          </a>
+          <?php endif; ?>
+        </li>
+        <li class="pc-item">
+          <?php if ($user_role == 'owner'): ?>
           <a href="?page=withdraw" class="pc-link">
             <span class="pc-micon"><i class="ti ti-cash"></i></span>
             <span class="pc-mtext">Withdraw</span>
           </a>
+          <?php endif; ?>
         </li>
-        <?php endif; ?>
         <?php if ($user_role == 'admin'): ?>
         <li class="pc-item">
           <a href="?page=owners" class="pc-link">
@@ -123,12 +133,6 @@ $user_role = $_SESSION['user_role'];
           </a>
         </li>
         <?php endif; ?>
-        <li class="pc-item">
-          <a href="?page=orders" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-shopping-cart"></i></span>
-            <span class="pc-mtext">Orders</span>
-          </a>
-        </li>
         <li class="pc-item">
           <a href="?page=transactions" class="pc-link">
             <span class="pc-micon"><i class="ti ti-credit-card"></i></span>
