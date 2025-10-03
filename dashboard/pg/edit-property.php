@@ -79,7 +79,15 @@ if ($id) {
                   <input type="text" class="form-control" id="title" name="title" value="<?= $property['title'] ?>" required>
                 </div>
                 <div class="form-group">
-                  <label for="address">Details</label>
+                  <label for="sqft">Landsize (sqft)</label>
+                  <input type="number" class="form-control" id="sqft" name="sqft" value="<?= $property['sqft'] ?>">
+                </div>
+                <div class="form-group">
+                  <label for="propertyType">Details</label>
+                  <textarea name="propertyType" id="propertyType" class="form-control"><?= $property['property_type'] ?></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="address">Location</label>
                   <input type="text" class="form-control" id="address" name="address" value="<?= $property['address'] ?>" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Update Property</button>

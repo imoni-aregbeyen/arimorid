@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $listingPrice = test_input($_POST['listingPrice']);
     $title = test_input($_POST['title']);
     $address = test_input($_POST['address']);
+    $sqft = isset($_POST['sqft']) ? test_input($_POST['sqft']) : null;
     if (!empty($_FILES['images']['name'][0])) {
         $uploadDir = '../../uploads/properties/';
         if (!is_dir($uploadDir)) {
@@ -43,9 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    $sql = "UPDATE properties SET property_type = ?, for_sell_rent = ?, listing_price = ?, title = ?, address = ? WHERE id = ?";
+    $sql = "UPDATE properties SET property_type = ?, for_sell_rent = ?, listing_price = ?, title = ?, address = ?, sqft = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssdssi", $propertyType, $forSellRent, $listingPrice, $title, $address, $id);
+    $stmt->bind_param("ssdssii", $propertyType, $forSellRent, $listingPrice, $title, $address, $sqft, $id);
     if ($stmt->execute()) {
         header('Location: ../?page=properties&status=success');
         exit();

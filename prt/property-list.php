@@ -62,6 +62,8 @@
                                         <h5 class="text-primary mb-3">&#8358;<?= number_format($property['listing_price']) ?></h5>
                                         <a class="d-block h5 mb-2" href=""><?= $property['title'] ?></a>
                                         <p><i class="fa fa-map-marker-alt text-primary me-2"></i><?= $property['address'] ?></p>
+                                        <p><i class="fa fa-ruler-combined text-success me-2"></i><?= $property['sqft'] ? $property['sqft'] . ' sqft' : 'N/A' ?></p>
+                                        <p><i class="fa fa-info-circle text-info me-2"></i><?= $property['property_type'] ?></p>
                                     </div>
                                     <div class="text-center mt-3">
                                         <a class="btn btn-success py-2 px-4 mb-1" href="?page=other-apartment-details&id=<?= $property['id'] ?>">View Details</a>
