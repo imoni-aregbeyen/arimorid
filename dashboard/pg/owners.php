@@ -121,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       <td>
                         <a href="?page=edit-owner&id=<?= $owner['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
                         <a href="?page=delete-owner&id=<?= $owner['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this owner?');">Delete</a>
+                        <a href="?page=owner-bookings&id=<?= $owner['id'] ?>" class="btn btn-sm btn-info">View Bookings</a>
                       </td>
                     </tr>
                   <?php endforeach; ?>
