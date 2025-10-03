@@ -65,9 +65,8 @@ $user_role = $_SESSION['user_role'];
 <nav class="pc-sidebar">
   <div class="navbar-wrapper">
     <div class="m-header">
-      <a href="./" class="b-brand text-primary">
-        <!-- ========   Change your logo from here   ============ -->
-        <!-- <img src="../img/site-logo.png" class="img-fluid logo-lg" alt="logo"> -->
+      <a href="../" class="b-brand text-primary">
+        <img src="../img/site-icon.png" class="img-fluid" alt="logo" style="width: 40px; height: 40px;">
       </a>
     </div>
     <div class="navbar-content">
@@ -75,7 +74,7 @@ $user_role = $_SESSION['user_role'];
         <li class="pc-item">
           <a href="../" class="pc-link">
             <span class="pc-micon"><i class="ti ti-dots"></i></span>
-            <span class="pc-mtext"></span>
+            <span class="pc-mtext">Visit Site</span>
           </a>
         </li>
         <li class="pc-item">
