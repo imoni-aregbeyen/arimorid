@@ -1,258 +1,373 @@
 <?php
+// session_start();
 // print_r($_SESSION);
 // Array ( [user_id] => 1 
 // [user_role] => admin 
-// [user_verified] => 0 
 // [user_email] => admin@arimoridgr.com.ng 
 // [user_name] => Administrator 
 // [logged_in] => 1 )
 $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['user_role'];
 
-$sql = "SELECT * FROM users";
+// Get selected month/year from filter or use current
+$selected_month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
+$selected_year = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
+
+// Common data for all roles
+$sql = "SELECT * FROM users WHERE role != 'admin'";
 $rs = $conn->query($sql);
 $users_rows = $rs->num_rows ?? 0;
+
+// Role-specific data
+if ($user_role === 'admin') {
+    // Admin queries with explicit table names
+    $apartments_count = $conn->query("SELECT COUNT(*) FROM service_apartments WHERE YEAR(created_at) = $selected_year AND MONTH(created_at) = $selected_month")->fetch_row()[0] ?? 0;
+    $bookings_count = $conn->query("SELECT COUNT(*) FROM bookings WHERE YEAR(created_at) = $selected_year AND MONTH(created_at) = $selected_month")->fetch_row()[0] ?? 0;
+    $total_revenue = $conn->query("SELECT SUM(total_cost) FROM bookings WHERE YEAR(created_at) = $selected_year AND MONTH(created_at) = $selected_month")->fetch_row()[0] ?? 0;
+    
+} elseif ($user_role === 'owner') {
+    // Get owner's apartment count
+    $apartments_sql = "SELECT COUNT(*) as count FROM service_apartments WHERE owner_id = $user_id AND YEAR(created_at) = $selected_year AND MONTH(created_at) = $selected_month";
+    $apartments_result = $conn->query($apartments_sql);
+    $apartments_count = $apartments_result->fetch_assoc()['count'] ?? 0;
+    
+    // Get owner's booking count
+    $bookings_sql = "SELECT COUNT(b.id) as count 
+                     FROM bookings b
+                     JOIN service_apartments a ON b.apartment_id = a.id
+                     WHERE a.owner_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month";
+    $bookings_result = $conn->query($bookings_sql);
+    $bookings_count = $bookings_result->fetch_assoc()['count'] ?? 0;
+    
+    // Get owner's total earnings
+    $earnings_sql = "SELECT SUM(b.total_daily_charge * b.days) as earnings 
+                     FROM bookings b
+                     JOIN service_apartments a ON b.apartment_id = a.id
+                     WHERE a.owner_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month";
+    $earnings_result = $conn->query($earnings_sql);
+    $total_earnings = $earnings_result->fetch_assoc()['earnings'] ?? 0;
+}
 ?>      
-      <!-- [ breadcrumb ] start -->
-      <div class="page-header">
-        <div class="page-block">
-          <div class="row align-items-center">
+<!-- [ breadcrumb ] start -->
+<div class="page-header">
+    <div class="page-block">
+        <div class="row align-items-center">
             <div class="col-md-12">
-              <div class="page-header-title">
-                <h5 class="m-b-10">Home</h5>
-              </div>
-              <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../dashboard/index.html">Home</a></li>
-                <li class="breadcrumb-item"><a href="javascript: void(0)">Dashboard</a></li>
-                <li class="breadcrumb-item" aria-current="page">Home</li>
-              </ul>
+                <div class="page-header-title">
+                    <h5 class="m-b-10">Home</h5>
+                </div>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="../dashboard/index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0)">Dashboard</a></li>
+                    <li class="breadcrumb-item" aria-current="page">Home</li>
+                </ul>
             </div>
-          </div>
         </div>
-      </div>
-      <!-- [ breadcrumb ] end -->
-      <!-- [ Main Content ] start -->
-      <div class="row">
-        <!-- [ sample-page ] start -->
-        <div class="col-md-6 col-xl-3">
-          <div class="card">
+    </div>
+</div>
+<!-- [ breadcrumb ] end -->
+<!-- Filter UI -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
             <div class="card-body">
-              <h6 class="mb-2 f-w-400 text-muted">Total Users</h6>
-              <h4 class="mb-3"><?= number_format($users_rows) ?></h4>
+                <h6 class="card-title">Filter Statistics</h6>
+                <form method="GET" class="d-flex align-items-center">
+                    <input type="hidden" name="page" value="index">
+                    <label for="month" class="me-2"><strong>Month:</strong></label>
+                    <select name="month" id="month" class="form-select me-3" style="width:auto;">
+                        <?php for ($m = 1; $m <= 12; $m++): ?>
+                            <option value="<?= $m ?>" <?= $m == $selected_month ? 'selected' : '' ?>>
+                                <?= date('F', mktime(0,0,0,$m,1)) ?>
+                            </option>
+                        <?php endfor; ?>
+                    </select>
+                    <label for="year" class="me-2"><strong>Year:</strong></label>
+                    <select name="year" id="year" class="form-select me-3" style="width:auto;">
+                        <?php for ($y = date('Y'); $y >= date('Y')-5; $y--): ?>
+                            <option value="<?= $y ?>" <?= $y == $selected_year ? 'selected' : '' ?>><?= $y ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <button type="submit" class="btn btn-primary me-2">Apply Filter</button>
+                    <a href="./" class="btn btn-outline-secondary">Reset</a>
+                </form>
+                <div class="mt-2">
+                    <small class="text-muted">Showing statistics for: <strong><?= date('F Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></strong></small>
+                </div>
             </div>
-          </div>
+        </div>
+    </div>
+</div>
+<!-- [ Main Content ] start -->
+<div class="row">
+    <?php if ($user_role === 'admin'): ?>
+        <!-- Admin Dashboard -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">Total Users</h6>
+                    <h4 class="mb-3"><?= number_format($users_rows) ?></h4>
+                    <small class="text-muted">All registered users</small>
+                </div>
+            </div>
         </div>
         <div class="col-md-6 col-xl-3">
-          <div class="card">
-            <div class="card-body">
-              <h6 class="mb-2 f-w-400 text-muted">Total Order</h6>
-              <h4 class="mb-3">18,800</h4>
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">New Apartments</h6>
+                    <h4 class="mb-3"><?= number_format($apartments_count) ?></h4>
+                    <small class="text-muted">Added in <?= date('M Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></small>
+                </div>
             </div>
-          </div>
         </div>
         <div class="col-md-6 col-xl-3">
-          <div class="card">
-            <div class="card-body">
-              <h6 class="mb-2 f-w-400 text-muted">Total Sales</h6>
-              <h4 class="mb-3">&#8358;35,078</h4>
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">Monthly Bookings</h6>
+                    <h4 class="mb-3"><?= number_format($bookings_count) ?></h4>
+                    <small class="text-muted">For <?= date('M Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></small>
+                </div>
             </div>
-          </div>
         </div>
         <div class="col-md-6 col-xl-3">
-          <div class="card">
-            <div class="card-body">
-              <h6 class="mb-2 f-w-400 text-muted">Total VAT</h6>
-              <h4 class="mb-3">&#8358;3,500</h4>
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">Monthly Revenue</h6>
+                    <h4 class="mb-3">₦<?= number_format($total_revenue, 2) ?></h4>
+                    <small class="text-muted">For <?= date('M Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></small>
+                </div>
             </div>
-          </div>
         </div>
 
-        <div class="col-md-12 col-xl-8">
-          <h5 class="mb-3">Recent Orders</h5>
-          <div class="card tbl-card">
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-hover table-borderless mb-0">
-                  <thead>
-                    <tr>
-                      <th>TRACKING NO.</th>
-                      <th>PRODUCT NAME</th>
-                      <th>TOTAL ORDER</th>
-                      <th>STATUS</th>
-                      <th class="text-end">TOTAL AMOUNT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Camera Lens</td>
-                      <td>40</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-danger f-10 m-r-5"></i>Rejected</span>
-                      </td>
-                      <td class="text-end">$40,570</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Laptop</td>
-                      <td>300</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-warning f-10 m-r-5"></i>Pending</span>
-                      </td>
-                      <td class="text-end">$180,139</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Mobile</td>
-                      <td>355</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-success f-10 m-r-5"></i>Approved</span></td>
-                      <td class="text-end">$180,139</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Camera Lens</td>
-                      <td>40</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-danger f-10 m-r-5"></i>Rejected</span>
-                      </td>
-                      <td class="text-end">$40,570</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Laptop</td>
-                      <td>300</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-warning f-10 m-r-5"></i>Pending</span>
-                      </td>
-                      <td class="text-end">$180,139</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Mobile</td>
-                      <td>355</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-success f-10 m-r-5"></i>Approved</span></td>
-                      <td class="text-end">$180,139</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Camera Lens</td>
-                      <td>40</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-danger f-10 m-r-5"></i>Rejected</span>
-                      </td>
-                      <td class="text-end">$40,570</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Laptop</td>
-                      <td>300</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-warning f-10 m-r-5"></i>Pending</span>
-                      </td>
-                      <td class="text-end">$180,139</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Mobile</td>
-                      <td>355</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-success f-10 m-r-5"></i>Approved</span></td>
-                      <td class="text-end">$180,139</td>
-                    </tr>
-                    <tr>
-                      <td><a href="#" class="text-muted">84564564</a></td>
-                      <td>Mobile</td>
-                      <td>355</td>
-                      <td><span class="d-flex align-items-center gap-2"><i
-                            class="fas fa-circle text-success f-10 m-r-5"></i>Approved</span></td>
-                      <td class="text-end">$180,139</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+        <!-- Recent Bookings for Admin -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Bookings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-borderless mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Apartment</th>
+                                    <th>Customer</th>
+                                    <th>Days</th>
+                                    <th>Total Cost</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $recent_bookings = $conn->query("
+                                    SELECT b.id, b.days, b.total_cost, b.created_at, 
+                                           a.title as apartment_title, u.name as customer_name
+                                    FROM bookings b
+                                    JOIN service_apartments a ON b.apartment_id = a.id
+                                    JOIN users u ON b.user_id = u.id
+                                    WHERE YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
+                                    ORDER BY b.created_at DESC LIMIT 5
+                                ");
+                                
+                                if ($recent_bookings->num_rows > 0) {
+                                    while($booking = $recent_bookings->fetch_assoc()) {
+                                        echo "<tr>
+                                            <td>#{$booking['id']}</td>
+                                            <td>{$booking['apartment_title']}</td>
+                                            <td>{$booking['customer_name']}</td>
+                                            <td>{$booking['days']}</td>
+                                            <td>₦" . number_format($booking['total_cost'], 2) . "</td>
+                                            <td>" . date('M j, Y', strtotime($booking['created_at'])) . "</td>
+                                        </tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='6' class='text-center'>No bookings found for " . date('F Y', mktime(0,0,0,$selected_month,1,$selected_year)) . "</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
 
-        <div class="col-md-12 col-xl-4">
-          <h5 class="mb-3">Income Overview</h5>
-          <div class="card">
-            <div class="card-body">
-              <h6 class="mb-2 f-w-400 text-muted">This Week Statistics</h6>
-              <h3 class="mb-3">$7,650</h3>
-              <div id="income-overview-chart"></div>
+    <?php elseif ($user_role === 'owner'): ?>
+        <!-- Owner Dashboard -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">My Apartments</h6>
+                    <h4 class="mb-3"><?= number_format($apartments_count) ?></h4>
+                    <small class="text-muted">Added in <?= date('M Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></small>
+                </div>
             </div>
-          </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">Monthly Bookings</h6>
+                    <h4 class="mb-3"><?= number_format($bookings_count) ?></h4>
+                    <small class="text-muted">For <?= date('M Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">Monthly Earnings</h6>
+                    <h4 class="mb-3">₦<?= number_format($total_earnings, 2) ?></h4>
+                    <small class="text-muted">For <?= date('M Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">Available Balance</h6>
+                    <h4 class="mb-3">₦<?= number_format($total_earnings * 0.8, 2) ?></h4>
+                    <small>(After 20% service charge)</small>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-12 col-xl-8">
-          <h5 class="mb-3">Sales Report</h5>
-          <div class="card">
-            <div class="card-body">
-              <h6 class="mb-2 f-w-400 text-muted">This Week Statistics</h6>
-              <h3 class="mb-0">$7,650</h3>
-              <div id="sales-report-chart"></div>
+        <!-- Recent Bookings for Owner -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Bookings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-borderless mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Apartment</th>
+                                    <th>Customer</th>
+                                    <th>Days</th>
+                                    <th>Total Cost</th>
+                                    <th>Your Earnings</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $owner_bookings = $conn->query("
+                                    SELECT b.id, b.days, b.total_cost, b.total_daily_charge, b.created_at, 
+                                           a.title as apartment_title, u.name as customer_name
+                                    FROM bookings b
+                                    JOIN service_apartments a ON b.apartment_id = a.id
+                                    JOIN users u ON b.user_id = u.id
+                                    WHERE a.owner_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
+                                    ORDER BY b.created_at DESC LIMIT 5
+                                ");
+                                
+                                if ($owner_bookings->num_rows > 0) {
+                                    while($booking = $owner_bookings->fetch_assoc()) {
+                                        $owner_earnings = $booking['total_daily_charge'] * $booking['days'];
+                                        echo "<tr>
+                                            <td>#{$booking['id']}</td>
+                                            <td>{$booking['apartment_title']}</td>
+                                            <td>{$booking['customer_name']}</td>
+                                            <td>{$booking['days']}</td>
+                                            <td>₦" . number_format($booking['total_cost'], 2) . "</td>
+                                            <td>₦" . number_format($owner_earnings, 2) . "</td>
+                                            <td>" . date('M j, Y', strtotime($booking['created_at'])) . "</td>
+                                        </tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='7' class='text-center'>No bookings found for " . date('F Y', mktime(0,0,0,$selected_month,1,$selected_year)) . "</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="col-md-12 col-xl-4">
-          <h5 class="mb-3">Transaction History</h5>
-          <div class="card">
-            <div class="list-group list-group-flush">
-              <a href="#" class="list-group-item list-group-item-action">
-                <div class="d-flex">
-                  <div class="flex-shrink-0">
-                    <div class="avtar avtar-s rounded-circle text-success bg-light-success">
-                      <i class="ti ti-gift f-18"></i>
-                    </div>
-                  </div>
-                  <div class="flex-grow-1 ms-3">
-                    <h6 class="mb-1">Order #002434</h6>
-                    <p class="mb-0 text-muted">Today, 2:00 AM</P>
-                  </div>
-                  <div class="flex-shrink-0 text-end">
-                    <h6 class="mb-1">+ $1,430</h6>
-                    <p class="mb-0 text-muted">78%</P>
-                  </div>
+
+    <?php else: ?>
+        <!-- User Dashboard -->
+        <?php
+        // User-specific filtered data
+        $user_bookings_count = $conn->query("SELECT COUNT(*) FROM bookings WHERE user_id = $user_id AND YEAR(created_at) = $selected_year AND MONTH(created_at) = $selected_month")->fetch_row()[0] ?? 0;
+        $user_total_spent = $conn->query("SELECT SUM(total_cost) FROM bookings WHERE user_id = $user_id AND YEAR(created_at) = $selected_year AND MONTH(created_at) = $selected_month")->fetch_row()[0] ?? 0;
+        ?>
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">Monthly Bookings</h6>
+                    <h4 class="mb-3"><?= number_format($user_bookings_count) ?></h4>
+                    <small class="text-muted">For <?= date('M Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></small>
                 </div>
-              </a>
-              <a href="#" class="list-group-item list-group-item-action">
-                <div class="d-flex">
-                  <div class="flex-shrink-0">
-                    <div class="avtar avtar-s rounded-circle text-primary bg-light-primary">
-                      <i class="ti ti-message-circle f-18"></i>
-                    </div>
-                  </div>
-                  <div class="flex-grow-1 ms-3">
-                    <h6 class="mb-1">Order #984947</h6>
-                    <p class="mb-0 text-muted">5 August, 1:45 PM</P>
-                  </div>
-                  <div class="flex-shrink-0 text-end">
-                    <h6 class="mb-1">- $302</h6>
-                    <p class="mb-0 text-muted">8%</P>
-                  </div>
-                </div>
-              </a>
-              <a href="#" class="list-group-item list-group-item-action">
-                <div class="d-flex">
-                  <div class="flex-shrink-0">
-                    <div class="avtar avtar-s rounded-circle text-danger bg-light-danger">
-                      <i class="ti ti-settings f-18"></i>
-                    </div>
-                  </div>
-                  <div class="flex-grow-1 ms-3">
-                    <h6 class="mb-1">Order #988784</h6>
-                    <p class="mb-0 text-muted">7 hours ago</P>
-                  </div>
-                  <div class="flex-shrink-0 text-end">
-                    <h6 class="mb-1">- $682</h6>
-                    <p class="mb-0 text-muted">16%</P>
-                  </div>
-                </div>
-              </a>
             </div>
-          </div>
         </div>
-      </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="mb-2 f-w-400 text-muted">Monthly Spent</h6>
+                    <h4 class="mb-3">₦<?= number_format($user_total_spent, 2) ?></h4>
+                    <small class="text-muted">For <?= date('M Y', mktime(0,0,0,$selected_month,1,$selected_year)) ?></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Bookings for User -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>My Recent Bookings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-borderless mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Apartment</th>
+                                    <th>Days</th>
+                                    <th>Total Cost</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $user_bookings = $conn->query("
+                                    SELECT b.id, b.days, b.total_cost, b.created_at, 
+                                           a.title as apartment_title, b.status
+                                    FROM bookings b
+                                    JOIN service_apartments a ON b.apartment_id = a.id
+                                    WHERE b.user_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
+                                    ORDER BY b.created_at DESC LIMIT 5
+                                ");
+                                
+                                if ($user_bookings->num_rows > 0) {
+                                    while($booking = $user_bookings->fetch_assoc()) {
+                                        $status_class = '';
+                                        if ($booking['status'] === 'confirmed') $status_class = 'text-success';
+                                        if ($booking['status'] === 'pending') $status_class = 'text-warning';
+                                        if ($booking['status'] === 'cancelled') $status_class = 'text-danger';
+                                        
+                                        echo "<tr>
+                                            <td>#{$booking['id']}</td>
+                                            <td>{$booking['apartment_title']}</td>
+                                            <td>{$booking['days']}</td>
+                                            <td>₦" . number_format($booking['total_cost'], 2) . "</td>
+                                            <td><span class='$status_class'>" . ucfirst($booking['status']) . "</span></td>
+                                            <td>" . date('M j, Y', strtotime($booking['created_at'])) . "</td>
+                                        </tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='6' class='text-center'>No bookings found for " . date('F Y', mktime(0,0,0,$selected_month,1,$selected_year)) . "</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
