@@ -196,72 +196,128 @@ $user_role = $_SESSION['user_role'];
 <!-- [Mobile Media Block end] -->
 <div class="ms-auto">
   <ul class="list-unstyled">
+  <li class="dropdown pc-h-item">
+    <a
+    class="pc-head-link dropdown-toggle arrow-none me-0"
+    data-bs-toggle="dropdown"
+    href="#"
+    role="button"
+    aria-haspopup="false"
+    aria-expanded="false"
+    >
+    <!-- <i class="ti ti-mail"></i> -->
+    </a>
+    <!-- Withdrawal Requests Dropdown for Admin -->
+    <?php if ($user_role == 'admin'): ?>
     <li class="dropdown pc-h-item">
-      <a
-        class="pc-head-link dropdown-toggle arrow-none me-0"
-        data-bs-toggle="dropdown"
-        href="#"
-        role="button"
-        aria-haspopup="false"
-        aria-expanded="false"
-      >
-        <!-- <i class="ti ti-mail"></i> -->
-      </a>
-<li class="dropdown pc-h-item">
     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-        <i class="ti ti-message-circle"></i>
-        <?php 
-        $unread = $conn->query("SELECT COUNT(*) FROM messages WHERE receiver_id = {$_SESSION['user_id']} AND is_read = 0")->fetch_row()[0];
-        if ($unread > 0): ?>
-            <span class="badge bg-danger rounded-pill"><?= $unread ?></span>
-        <?php endif; ?>
+      <i class="ti ti-cash"></i>
+      <?php 
+      $pending_withdrawals = $conn->query("SELECT COUNT(*) FROM withdrawals WHERE status = 0")->fetch_row()[0];
+      if ($pending_withdrawals > 0): ?>
+        <span class="badge bg-warning text-dark rounded-pill"><?= $pending_withdrawals ?></span>
+      <?php endif; ?>
     </a>
     <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
-        <div class="dropdown-header d-flex align-items-center justify-content-between">
-            <h5 class="m-0">Messages</h5>
-            <a href="?page=chat" class="pc-head-link">View All</a>
-        </div>
-        <div class="dropdown-divider"></div>
-        <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 215px)">
-            <?php
-            $recent_messages = $conn->query("
-                SELECT m.*, u.name as sender_name 
-                FROM messages m
-                JOIN users u ON m.sender_id = u.id
-                WHERE m.receiver_id = {$_SESSION['user_id']}
-                ORDER BY m.created_at DESC LIMIT 5
-            ");
-            
-            if ($recent_messages->num_rows > 0): ?>
-                <div class="list-group list-group-flush w-100">
-                    <?php while($msg = $recent_messages->fetch_assoc()): ?>
-                        <a href="?page=chat&with=<?= $msg['sender_id'] ?>" class="list-group-item list-group-item-action">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0">
-                                    <div class="avtar avtar-s rounded-circle bg-light-primary">
-                                        <i class="ti ti-user f-18"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-1">
-                                    <h6 class="mb-1"><?= htmlspecialchars($msg['sender_name']) ?></h6>
-                                    <p class="mb-0 text-muted"><?= htmlspecialchars(substr($msg['message'], 0, 50)) ?><?= strlen($msg['message']) > 50 ? '...' : '' ?></p>
-                                    <small class="text-muted"><?= date('M j, h:i A', strtotime($msg['created_at'])) ?></small>
-                                </div>
-                                <?php if (!$msg['is_read']): ?>
-                                    <span class="badge bg-danger rounded-pill">New</span>
-                                <?php endif; ?>
-                            </div>
-                        </a>
-                    <?php endwhile; ?>
+      <div class="dropdown-header d-flex align-items-center justify-content-between">
+        <h5 class="m-0">Withdrawal Requests</h5>
+        <a href="?page=withdrawals" class="pc-head-link">View All</a>
+      </div>
+      <div class="dropdown-divider"></div>
+      <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 215px)">
+        <?php
+        $recent_withdrawals = $conn->query("
+          SELECT w.*, u.name as owner_name 
+          FROM withdrawals w
+          JOIN users u ON w.owner_id = u.id
+          WHERE w.status = 0
+          ORDER BY w.created_at DESC LIMIT 5
+        ");
+        if ($recent_withdrawals->num_rows > 0): ?>
+          <div class="list-group list-group-flush w-100">
+            <?php while($wd = $recent_withdrawals->fetch_assoc()): ?>
+              <div class="list-group-item">
+                <div class="d-flex">
+                  <div class="flex-shrink-0">
+                    <div class="avtar avtar-s rounded-circle bg-light-warning">
+                      <i class="ti ti-cash f-18"></i>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1 ms-1">
+                    <h6 class="mb-1">₦<?= number_format($wd['amount'], 2) ?></h6>
+                    <p class="mb-0 text-muted">Owner: <?= htmlspecialchars($wd['owner_name']) ?></p>
+                    <small class="text-muted">Requested: <?= date('M j, h:i A', strtotime($wd['created_at'])) ?></small>
+                  </div>
                 </div>
-            <?php else: ?>
-                <div class="text-center py-3">
-                    <i class="ti ti-message-off fs-4 text-muted"></i>
-                    <p class="mt-2">No messages yet</p>
-                </div>
-            <?php endif; ?>
-        </div>
+              </div>
+            <?php endwhile; ?>
+          </div>
+        <?php else: ?>
+          <div class="text-center py-3">
+            <i class="ti ti-cash fs-4 text-muted"></i>
+            <p class="mt-2">No pending withdrawals</p>
+          </div>
+        <?php endif; ?>
+      </div>
     </div>
+    </li>
+    <?php endif; ?>
+    <!-- Messages Dropdown -->
+<li class="dropdown pc-h-item">
+  <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+    <i class="ti ti-message-circle"></i>
+    <?php 
+    $unread = $conn->query("SELECT COUNT(*) FROM messages WHERE receiver_id = {$_SESSION['user_id']} AND is_read = 0")->fetch_row()[0];
+    if ($unread > 0): ?>
+      <span class="badge bg-danger rounded-pill"><?= $unread ?></span>
+    <?php endif; ?>
+  </a>
+  <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
+    <div class="dropdown-header d-flex align-items-center justify-content-between">
+      <h5 class="m-0">Messages</h5>
+      <a href="?page=chat" class="pc-head-link">View All</a>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 215px)">
+      <?php
+      $recent_messages = $conn->query("
+        SELECT m.*, u.name as sender_name 
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.receiver_id = {$_SESSION['user_id']}
+        ORDER BY m.created_at DESC LIMIT 5
+      ");
+            
+      if ($recent_messages->num_rows > 0): ?>
+        <div class="list-group list-group-flush w-100">
+          <?php while($msg = $recent_messages->fetch_assoc()): ?>
+            <a href="?page=chat&with=<?= $msg['sender_id'] ?>" class="list-group-item list-group-item-action">
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <div class="avtar avtar-s rounded-circle bg-light-primary">
+                    <i class="ti ti-user f-18"></i>
+                  </div>
+                </div>
+                <div class="flex-grow-1 ms-1">
+                  <h6 class="mb-1"><?= htmlspecialchars($msg['sender_name']) ?></h6>
+                  <p class="mb-0 text-muted"><?= htmlspecialchars(substr($msg['message'], 0, 50)) ?><?= strlen($msg['message']) > 50 ? '...' : '' ?></p>
+                  <small class="text-muted"><?= date('M j, h:i A', strtotime($msg['created_at'])) ?></small>
+                </div>
+                <?php if (!$msg['is_read']): ?>
+                  <span class="badge bg-danger rounded-pill">New</span>
+                <?php endif; ?>
+              </div>
+            </a>
+          <?php endwhile; ?>
+        </div>
+      <?php else: ?>
+        <div class="text-center py-3">
+          <i class="ti ti-message-off fs-4 text-muted"></i>
+          <p class="mt-2">No messages yet</p>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
 </li>
     </li>
     <li class="dropdown pc-h-item header-user-profile">
