@@ -139,17 +139,21 @@ try {
         echo '<p><strong>Total Cost:</strong> <span class="fw-bold">₦' . number_format($total_cost, 2) . '</span></p>';
         echo '</div>';
         echo '<div class="card-footer text-center">';
-        echo '<button class="btn btn-success me-2" onclick="printReceipt()">Download Receipt</button>';
-        echo '<a href="./" class="btn btn-primary">Return Home</a>';
+        echo '<button class="btn btn-primary me-2" onclick="printReceipt()">Print Receipt</button>';
+        echo '<a href="./dashboard/" class="btn btn-secondary">Go to Dashboard</a>';
         echo '</div></div></div>';
-        
-        // Fixed JavaScript for printing
+        // Print and close only
         echo '<script>
         function printReceipt() {
-            // Create a clone of the receipt card
             const receipt = document.querySelector(".card.mx-auto").cloneNode(true);
-            
-            // Create a print-friendly window
+            // Remove Print Receipt and Go to Dashboard buttons from the cloned card
+            const footer = receipt.querySelector(".card-footer");
+            if (footer) {
+                const printBtn = footer.querySelector("button[onclick=\'printReceipt()\']");
+                if (printBtn) printBtn.remove();
+                const dashBtn = footer.querySelector("a[href*=\'dashboard\']");
+                if (dashBtn) dashBtn.remove();
+            }
             const printWindow = window.open("", "_blank");
             printWindow.document.write(`
                 <!DOCTYPE html>
