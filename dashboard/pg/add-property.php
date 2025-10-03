@@ -26,20 +26,6 @@
             </div>
             <div class="card-body">
               <form action="./ac/action-add-property.php" method="POST" enctype="multipart/form-data">
-                <!-- <div class="form-group">
-                  <label for="propertyType">Property Type</label>
-                  <select class="form-control" id="propertyType" name="propertyType" required>
-                    <option value="Apartment" selected>Apartment</option>
-                    <option value="Villa">Villa</option>
-                    <option value="Home">Home</option>
-                    <option value="Office">Office</option>
-                    <option value="Building">Building</option>
-                    <option value="Townhouse">Townhouse</option>
-                    <option value="Shop">Shop</option>
-                    <option value="Garage">Garage</option>
-                  </select>
-                </div> -->
-                <input type="hidden" name="propertyType" value="Apartment">
                 <div class="form-group">
                   <label for="forSellRent">For Sell / For Rent</label>
                   <select class="form-control" id="forSellRent" name="forSellRent" required>
@@ -64,21 +50,17 @@
                   <input type="text" class="form-control" id="title" name="title" required>
                 </div>
                 <div class="form-group">
-                  <label for="address">Details</label>
-                  <input type="text" class="form-control" id="address" name="address" placeholder="eg. Location" required>
-                </div>
-                <!-- <div class="form-group">
-                  <label for="sqft">Sqft</label>
-                  <input type="number" class="form-control" id="sqft" name="sqft" required>
+                  <label for="address">Location</label>
+                  <input type="text" class="form-control" id="address" name="address" placeholder="" required>
                 </div>
                 <div class="form-group">
-                  <label for="bed">Bed</label>
-                  <input type="number" class="form-control" id="bed" name="bed" required>
+                  <label for="sqft">Landsize</label>
+                  <input type="text" class="form-control" id="sqft" name="sqft">
                 </div>
                 <div class="form-group">
-                  <label for="bath">Bath</label>
-                  <input type="number" class="form-control" id="bath" name="bath" required>
-                </div> -->
+                  <label for="propertyType">Details</label>
+                  <textarea name="propertyType" id="propertyType" class="form-control"></textarea>
+                </div>
                 <button type="submit" class="btn btn-primary">Add Property</button>
               </form>
             </div>

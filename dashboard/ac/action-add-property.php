@@ -28,13 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve form data
     $propertyType = test_input($_POST['propertyType']);
     $forSellRent = test_input($_POST['forSellRent']);
-    $ownerPrice = isset($_POST['ownerPrice']) ? test_input($_POST['ownerPrice']) : null;
     $listingPrice = test_input($_POST['listingPrice']);
     $title = test_input($_POST['title']);
     $address = test_input($_POST['address']);
     $sqft = isset($_POST['sqft']) ? test_input($_POST['sqft']) : null;
-    $bed = isset($_POST['bed']) ? test_input($_POST['bed']) : null;
-    $bath = isset($_POST['bath']) ? test_input($_POST['bath']) : null;
 
     // Validate required fields
     if (empty($propertyType) || empty($forSellRent) || empty($listingPrice) || empty($title) || empty($address)) {
@@ -65,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $imagesJson = json_encode($uploadedImages);
 
     // Insert data into the database
-    $stmt = $conn->prepare("INSERT INTO properties (property_type, for_sell_rent, owner_price, listing_price, title, address, sqft, bed, bath, images, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
-    $stmt->bind_param("ssddsssdds", $propertyType, $forSellRent, $ownerPrice, $listingPrice, $title, $address, $sqft, $bed, $bath, $imagesJson);
+    $stmt = $conn->prepare("INSERT INTO properties (property_type, for_sell_rent, listing_price, title, address, sqft, images, owner_id) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
+    $stmt->bind_param("ssdssds", $propertyType, $forSellRent, $listingPrice, $title, $address, $sqft, $imagesJson);
 
     if ($stmt->execute()) {
         header('Location: ../?page=properties&status=success');
