@@ -121,9 +121,9 @@ try {
         unset($_SESSION['pending_booking']);
         // Show booking receipt
         echo '<div class="container py-5"><div class="card mx-auto" style="max-width:500px;">';
-        echo '<div class="card-header bg-primary text-white text-center">
+        echo '<div class="card-header bg-light text-secondary text-center">
         <img class="img-fluid" src="img/site-icon.png" alt="Icon" style="width: 30px; height: 30px;">
-        <h4 class="text-light">Booking Receipt</h4>
+        <h4 class="">Booking Receipt</h4>
         </div>';
         echo '<div class="card-body">';
         echo '<p><strong>Payment Reference:</strong> ' . htmlspecialchars($reference) . '</p>';
