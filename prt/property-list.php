@@ -1,3 +1,12 @@
+<style>
+.property-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+</style>
 <div class="container-xxl py-5" id="property-list">
             <div class="container">
                 <div class="row g-0 gx-5 align-items-end">
@@ -28,7 +37,7 @@
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="<?= $delay ?>s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">
-                                        <a href=""><img class="img-fluid" src="./uploads/<?= $images[0] ?>" alt="<?= $images[0] ?>"></a>
+                                        <a href=""><img class="img-fluid property-img" src="./uploads/<?= $images[0] ?>" alt="<?= $images[0] ?>"></a>
                                     </div>
                                     <div class="p-4 pb-0">
                                         <h5 class="text-primary mb-3">&#8358;<?= number_format($property['listing_daily_charge']) ?></h5>
@@ -55,7 +64,7 @@
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="<?= $delay ?>s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">
-                                        <a href=""><img class="img-fluid" src="./uploads/properties/<?= $images[0] ?>" alt=""></a>
+                                        <a href=""><img class="img-fluid property-img" src="./uploads/properties/<?= $images[0] ?>" alt=""></a>
                                         <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">For <?= $property['for_sell_rent'] ?></div>
                                     </div>
                                     <div class="p-4 pb-0">
@@ -82,7 +91,7 @@
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="<?= $delay ?>s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">
-                                        <a href=""><img class="img-fluid" src="./uploads/properties/<?= $images[0] ?>" alt=""></a>
+                                        <a href=""><img class="img-fluid property-img" src="./uploads/properties/<?= $images[0] ?>" alt=""></a>
                                         <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">For <?= $property['for_sell_rent'] ?></div>
                                     </div>
                                     <div class="p-4 pb-0">
