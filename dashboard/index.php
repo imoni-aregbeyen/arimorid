@@ -83,6 +83,7 @@ $user_role = $_SESSION['user_role'];
             <span class="pc-mtext">Dashboard</span>
           </a>
         </li>
+        <?php if ($user_role == 'admin' || $user_role == 'owner'): ?>
         <li class="pc-item">
           <a href="?page=service-apartments" class="pc-link">
             <span class="pc-micon"><i class="ti ti-building"></i></span>
@@ -90,18 +91,17 @@ $user_role = $_SESSION['user_role'];
           </a>
         </li>
         <li class="pc-item">
-          <?php if ($user_role != 'owner'): ?>
           <a href="?page=properties" class="pc-link">
             <span class="pc-micon"><i class="ti ti-building"></i></span>
             <span class="pc-mtext">Other Properties</span>
           </a>
-          <?php endif; ?>
         </li>
+        <?php endif; ?>
         <li class="pc-item">
           <?php if ($user_role != 'owner'): ?>
-          <a href="?page=orders" class="pc-link">
-            <span class="pc-micon"><i class="ti ti-shopping-cart"></i></span>
-            <span class="pc-mtext">Orders</span>
+          <a href="?page=bookings" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-calendar"></i></span>
+            <span class="pc-mtext">Bookings</span>
           </a>
           <?php endif; ?>
         </li>
