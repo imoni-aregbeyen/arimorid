@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_addons']) && is
       $total += $subtotal;
       $order_rows[] = [
         'addon_id' => $addon_id,
+        'service' => $addon['service'],
         'days' => $days,
         'price' => $price,
         'subtotal' => $subtotal
@@ -68,30 +69,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_addons']) && is
   } else {
     $vat = $total * 0.075;
     $grand_total = $total + $vat;
-    $success = true;
-    $error_message = "";
-    foreach ($order_rows as $row) {
-      $stmt = $conn->prepare("INSERT INTO addon_orders (batch_id, user_id, addon_id, days, price, subtotal, vat, grand_total, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-      $default_status = 0;
-      if ($stmt) {
-        $stmt->bind_param("siiiddddi", $batch_id, $user_id, $row['addon_id'], $row['days'], $row['price'], $row['subtotal'], $vat, $grand_total, $default_status);
-        if (!$stmt->execute()) {
-          $success = false;
-          $error_message = $stmt->error;
-          break;
-        }
-        $stmt->close();
-      } else {
-        $success = false;
-        $error_message = $conn->error;
-        break;
-      }
-    }
-    if ($success) {
-      echo '<div class="alert alert-success">Order placed successfully!</div>';
-    } else {
-      echo '<div class="alert alert-danger">Error placing order: ' . htmlspecialchars($error_message) . '</div>';
-    }
+    // Store order details in session for payment
+    $_SESSION['pending_addon_order'] = [
+      'batch_id' => $batch_id,
+      'user_id' => $user_id,
+      'orders' => $order_rows,
+      'total' => $total,
+      'vat' => $vat,
+      'grand_total' => $grand_total,
+      'user_email' => $_SESSION['user_email'] ?? '',
+    ];
+    header('Location: ./?page=process-payment&type=addon');
+    exit;
   }
 }
 
@@ -135,7 +124,7 @@ if ($order_stmt) {
                 <tr>
                   <th>Select</th>
                   <th>Service</th>
-                  <th>Price (per day)</th>
+                  <th>Price</th>
                   <th>Days</th>
                   <th>Subtotal</th>
                 </tr>

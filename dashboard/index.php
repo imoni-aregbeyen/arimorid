@@ -18,6 +18,13 @@ $pg = isset($_GET['page']) ? $_GET['page'] : 'index';
 // [logged_in] => 1 )
 $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['user_role'];
+
+define('ADDRESS', 'No. 55B Zazzau Road, Lagos, Nigeria');
+define('PHONE', '+2347016928568');
+define('EMAIL', 'info@arimoridgr.com.ng');
+define('WHATSAPP_LINK', 'https://wa.me/2347016928568');
+define('SK_TEST', 'sk_test_1c76b2add4efbca75a1101c544f8a9701af712ac');
+define('PK_TEST', 'pk_test_4f31d372e25d6f5fcd353355655b63ea343fbf9c');
 ?>
 
 <!DOCTYPE html>
