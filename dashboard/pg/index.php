@@ -197,19 +197,21 @@ if ($user_role === 'admin') {
                                     <th>Customer</th>
                                     <th>Days</th>
                                     <th>Total Cost</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 $recent_bookings = $conn->query("
-                                    SELECT b.id, b.days, b.total_cost, b.created_at, 
-                                           a.title as apartment_title, u.name as customer_name
-                                    FROM bookings b
-                                    JOIN service_apartments a ON b.apartment_id = a.id
-                                    JOIN users u ON b.user_id = u.id
-                                    WHERE YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
-                                    ORDER BY b.created_at DESC LIMIT 5
+                     SELECT b.id, b.days, b.total_cost, b.created_at, b.check_in, b.check_out,
+                         a.title as apartment_title, u.name as customer_name
+                     FROM bookings b
+                     JOIN service_apartments a ON b.apartment_id = a.id
+                     JOIN users u ON b.user_id = u.id
+                     WHERE YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
+                     ORDER BY b.created_at DESC LIMIT 5
                                 ");
                                 
                                 if ($recent_bookings->num_rows > 0) {
@@ -220,6 +222,8 @@ if ($user_role === 'admin') {
                                             <td>{$booking['customer_name']}</td>
                                             <td>{$booking['days']}</td>
                                             <td>₦" . number_format($booking['total_cost'], 2) . "</td>
+                                            <td>" . date('M j, Y', strtotime($booking['check_in'])) . "</td>
+                                            <td>" . date('M j, Y', strtotime($booking['check_out'])) . "</td>
                                             <td>" . date('M j, Y', strtotime($booking['created_at'])) . "</td>
                                         </tr>";
                                     }
@@ -290,19 +294,21 @@ if ($user_role === 'admin') {
                                     <th>Days</th>
                                     <th>Total Cost</th>
                                     <th>Your Earnings</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 $owner_bookings = $conn->query("
-                                    SELECT b.id, b.days, b.total_cost, b.total_daily_charge, b.created_at, 
-                                           a.title as apartment_title, u.name as customer_name
-                                    FROM bookings b
-                                    JOIN service_apartments a ON b.apartment_id = a.id
-                                    JOIN users u ON b.user_id = u.id
-                                    WHERE a.owner_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
-                                    ORDER BY b.created_at DESC LIMIT 5
+                     SELECT b.id, b.days, b.total_cost, b.total_daily_charge, b.created_at, b.check_in, b.check_out,
+                         a.title as apartment_title, u.name as customer_name
+                     FROM bookings b
+                     JOIN service_apartments a ON b.apartment_id = a.id
+                     JOIN users u ON b.user_id = u.id
+                     WHERE a.owner_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
+                     ORDER BY b.created_at DESC LIMIT 5
                                 ");
                                 
                                 if ($owner_bookings->num_rows > 0) {
@@ -315,6 +321,8 @@ if ($user_role === 'admin') {
                                             <td>{$booking['days']}</td>
                                             <td>₦" . number_format($booking['total_cost'], 2) . "</td>
                                             <td>₦" . number_format($owner_earnings, 2) . "</td>
+                                            <td>" . date('M j, Y', strtotime($booking['check_in'])) . "</td>
+                                            <td>" . date('M j, Y', strtotime($booking['check_out'])) . "</td>
                                             <td>" . date('M j, Y', strtotime($booking['created_at'])) . "</td>
                                         </tr>";
                                     }
@@ -371,18 +379,20 @@ if ($user_role === 'admin') {
                                     <th>Days</th>
                                     <th>Total Cost</th>
                                     <th>Status</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 $user_bookings = $conn->query("
-                                    SELECT b.id, b.days, b.total_cost, b.created_at, 
-                                           a.title as apartment_title, b.status
-                                    FROM bookings b
-                                    JOIN service_apartments a ON b.apartment_id = a.id
-                                    WHERE b.user_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
-                                    ORDER BY b.created_at DESC LIMIT 5
+                     SELECT b.id, b.days, b.total_cost, b.created_at, b.check_in, b.check_out,
+                         a.title as apartment_title, b.status
+                     FROM bookings b
+                     JOIN service_apartments a ON b.apartment_id = a.id
+                     WHERE b.user_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month
+                     ORDER BY b.created_at DESC LIMIT 5
                                 ");
                                 
                                 if ($user_bookings->num_rows > 0) {
@@ -398,6 +408,8 @@ if ($user_role === 'admin') {
                                             <td>{$booking['days']}</td>
                                             <td>₦" . number_format($booking['total_cost'], 2) . "</td>
                                             <td><span class='$status_class'>" . ucfirst($booking['status']) . "</span></td>
+                                            <td>" . date('M j, Y', strtotime($booking['check_in'])) . "</td>
+                                            <td>" . date('M j, Y', strtotime($booking['check_out'])) . "</td>
                                             <td>" . date('M j, Y', strtotime($booking['created_at'])) . "</td>
                                         </tr>";
                                     }
