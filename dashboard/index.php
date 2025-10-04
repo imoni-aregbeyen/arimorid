@@ -126,8 +126,30 @@ $user_role = $_SESSION['user_role'];
             <span class="pc-mtext">Users</span>
           </a>
         </li>
+        <?php endif; ?>
+        <?php if ($user_role == 'admin'): ?>
+          <?php
+            // Count pending batch orders (at least one order in batch with status 0)
+            $pending_batches = 0;
+            $batch_sql = "SELECT batch_id FROM addon_orders WHERE status = 0 GROUP BY batch_id HAVING COUNT(*) > 0";
+            $batch_result = $conn->query($batch_sql);
+            if ($batch_result) {
+              $pending_batches = $batch_result->num_rows;
+            }
+          ?>
+          <li class="pc-item">
+            <a href="?page=addons" class="pc-link">
+              <span class="pc-micon"><i class="ti ti-list"></i></span>
+              <span class="pc-mtext">Additional Services
+                <?php if ($pending_batches > 0): ?>
+                  <span class="badge bg-warning text-dark ms-1"><?= $pending_batches ?></span>
+                <?php endif; ?>
+              </span>
+            </a>
+          </li>
+        <?php elseif ($user_role == 'user'): ?>
         <li class="pc-item">
-          <a href="?page=addons" class="pc-link">
+          <a href="?page=user-addons" class="pc-link">
             <span class="pc-micon"><i class="ti ti-list"></i></span>
             <span class="pc-mtext">Additional Services</span>
           </a>
