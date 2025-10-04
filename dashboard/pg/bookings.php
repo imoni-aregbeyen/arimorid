@@ -62,8 +62,20 @@ if (isset($_GET['delete'])) {
 
 // Fetch bookings based on user role
 try {
-    if ($_SESSION['user_role'] === 'owner') {
-        // For owners, only show bookings for their apartments
+    if ($_SESSION['user_role'] === 'admin') {
+        // Admin: show all bookings
+        $query = "SELECT b.*, 
+                         u.name as customer_name, 
+                         u.email as customer_email,
+                         a.title as apartment_title
+                  FROM bookings b
+                  LEFT JOIN users u ON b.user_id = u.id
+                  LEFT JOIN service_apartments a ON b.apartment_id = a.id
+                  ORDER BY b.created_at DESC";
+        $result = $GLOBALS['conn']->query($query);
+        $bookings = $result->fetch_all(MYSQLI_ASSOC);
+    } elseif ($_SESSION['user_role'] === 'owner') {
+        // Owner: bookings for their apartments
         $query = "SELECT b.*, 
                          u.name as customer_name, 
                          u.email as customer_email,
@@ -73,7 +85,6 @@ try {
                   LEFT JOIN service_apartments a ON b.apartment_id = a.id
                   WHERE a.owner_id = ?
                   ORDER BY b.created_at DESC";
-        
         $stmt = $GLOBALS['conn']->prepare($query);
         $stmt->bind_param("i", $_SESSION['user_id']);
         $stmt->execute();
@@ -81,7 +92,7 @@ try {
         $bookings = $result->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
     } else {
-        // For admin or other roles, show all bookings
+        // User: only their own bookings
         $query = "SELECT b.*, 
                          u.name as customer_name, 
                          u.email as customer_email,
@@ -89,10 +100,14 @@ try {
                   FROM bookings b
                   LEFT JOIN users u ON b.user_id = u.id
                   LEFT JOIN service_apartments a ON b.apartment_id = a.id
+                  WHERE b.user_id = ?
                   ORDER BY b.created_at DESC";
-        
-        $result = $GLOBALS['conn']->query($query);
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->bind_param("i", $_SESSION['user_id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
         $bookings = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
     }
     
     if (!$result) {

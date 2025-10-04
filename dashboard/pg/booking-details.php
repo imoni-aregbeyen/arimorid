@@ -225,9 +225,11 @@ if (isset($_SESSION['success_message'])) {
                             
                             <div class="d-flex gap-2">
                                 
+                                <?php if ($_SESSION['user_role'] === 'admin'): ?>
                                 <a href="?page=bookings&delete=<?= $booking['id'] ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?')">
                                     <i class="ti ti-trash"></i> Delete Booking
                                 </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
