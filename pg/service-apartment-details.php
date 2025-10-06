@@ -14,20 +14,24 @@ function handleBookingRequest() {
         exit;
     }
 
+    // Check verification status
+    if (!isset($_SESSION['user_verified']) || $_SESSION['user_verified'] != 1) {
+        $_SESSION['booking_error'] = 'You must complete your KYC before booking. <a href="./dashboard/pg/kyc.php" class="alert-link">Update your KYC information here</a>.';
+        header("Location: ./?page=service-apartment-details&id=" . ($_GET['id'] ?? ''));
+        exit;
+    }
+
     $id = (int)($_GET['id'] ?? NULL);
     if (!$id) {
-        return; // Return instead of die to show error on page
+        return;
     }
-    
     $apartment = get_data("service_apartments", "WHERE id=$id")[0] ?? null;
     if (!$apartment) {
-        return; // Return instead of die
+        return;
     }
-    
     $units = (int)($apartment['units'] ?? 1);
     $check_in = $_POST['check_in'] ?? '';
     $check_out = $_POST['check_out'] ?? '';
-    
     if ($check_in && $check_out) {
         $sql = "SELECT COUNT(*) as count FROM bookings WHERE apartment_id = ? AND (
             (check_in <= ? AND check_out > ?) OR
@@ -46,7 +50,6 @@ function handleBookingRequest() {
             exit;
         }
     }
-
     // Calculate costs
     $days = max(1, (int)($_POST['days'] ?? 1));
     $listing_daily_charge = (float)$apartment['listing_daily_charge'];
@@ -54,7 +57,6 @@ function handleBookingRequest() {
     $total_daily_charge = $listing_daily_charge * $days;
     $vat = $total_daily_charge * 0.075;
     $total_cost = $total_daily_charge + $service_charge + $vat;
-
     // Store booking details in session
     $_SESSION['pending_booking'] = [
         'apartment_id' => $apartment['id'],
@@ -65,7 +67,6 @@ function handleBookingRequest() {
         'check_in' => $check_in,
         'check_out' => $check_out
     ];
-
     header("Location: ./?page=process-payment");
     exit;
 }
@@ -93,7 +94,7 @@ function show_error($message) {
 <!-- Apartment Details UI -->
 <div class="container py-5">
     <?php if (isset($_SESSION['booking_error'])): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($_SESSION['booking_error']); ?></div>
+        <div class="alert alert-danger"><?php echo $_SESSION['booking_error']; ?></div>
         <?php unset($_SESSION['booking_error']); ?>
     <?php endif; ?>
     

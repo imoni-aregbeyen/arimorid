@@ -106,7 +106,7 @@ define('PK_TEST', 'pk_test_4f31d372e25d6f5fcd353355655b63ea343fbf9c');
         <?php endif; ?>
         <li class="pc-item">
           <?php if ($user_role != 'owner'): ?>
-          <a href="?page=bookings" class="pc-link">
+          <a href="<?php echo ($_SESSION['user_role'] == 'user' && $_SESSION['user_verified'] != 1) ? 'pg/kyc.php' : '?page=bookings'; ?>" class="pc-link">
             <span class="pc-micon"><i class="ti ti-calendar"></i></span>
             <span class="pc-mtext">Bookings</span>
           </a>
@@ -156,14 +156,14 @@ define('PK_TEST', 'pk_test_4f31d372e25d6f5fcd353355655b63ea343fbf9c');
           </li>
         <?php elseif ($user_role == 'user'): ?>
         <li class="pc-item">
-          <a href="?page=user-addons" class="pc-link">
+          <a href="<?php echo ($_SESSION['user_verified'] != 1) ? '?page=kyc' : '?page=user-addons'; ?>" class="pc-link">
             <span class="pc-micon"><i class="ti ti-list"></i></span>
             <span class="pc-mtext">Additional Services</span>
           </a>
         </li>
         <?php endif; ?>
         <li class="pc-item">
-          <a href="?page=transactions" class="pc-link">
+          <a href="<?php echo ($_SESSION['user_role'] == 'user' && $_SESSION['user_verified'] != 1) ? '?page=kyc' : '?page=transactions'; ?>" class="pc-link">
             <span class="pc-micon"><i class="ti ti-credit-card"></i></span>
             <span class="pc-mtext">Transactions</span>
           </a>
