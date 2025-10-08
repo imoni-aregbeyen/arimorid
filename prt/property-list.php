@@ -48,7 +48,11 @@
                                         
                                     </div>
                                     <div class="text-center p-3">
-                                        <a class="btn btn-outline-primary w-100 py-2 px-4" href="?page=service-apartment-details&id=<?= $property['id'] ?>">Book Now</a>
+                                        <?php if (!isset($property['status']) || $property['status'] == 1): ?>
+                                            <a class="btn btn-outline-primary w-100 py-2 px-4" href="?page=service-apartment-details&id=<?= $property['id'] ?>">Book Now</a>
+                                        <?php else: ?>
+                                            <button class="btn btn-secondary w-100 py-2 px-4" disabled>Suspended</button>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>

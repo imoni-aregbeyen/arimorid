@@ -31,8 +31,11 @@ if ($result) {
         <?php if (!empty($apartments)): ?>
             <?php foreach ($apartments as $apartment): ?>
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm">
+                    <div class="card border-0 shadow-sm position-relative">
                         <img src="./uploads/<?php echo htmlspecialchars($apartment['images'][0]); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($apartment['title']); ?>">
+                        <?php if (isset($apartment['status']) && $apartment['status'] == 0): ?>
+                            <span class="badge bg-secondary position-absolute top-0 end-0 m-2">Suspended</span>
+                        <?php endif; ?>
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($apartment['title']); ?></h5>
                             <p class="card-text"><?php echo htmlspecialchars($apartment['address']); ?></p>

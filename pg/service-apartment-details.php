@@ -78,9 +78,16 @@ if (!$id) {
     return;
 }
 
+
 $apartment = get_data("service_apartments", "WHERE id=$id")[0] ?? null;
 if (!$apartment) {
     echo show_error("Apartment not found");
+    return;
+}
+
+// Prevent booking if suspended
+if (isset($apartment['status']) && $apartment['status'] == 0) {
+    echo '<div class="container py-5"><div class="alert alert-warning">This apartment is currently suspended and cannot be booked.</div></div>';
     return;
 }
 
