@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle KYC Information Update
     elseif (isset($_POST['update_kyc_info'])) {
         $id_type = trim($_POST['id_type'] ?? '');
+        $id_number = trim($_POST['id_number'] ?? '');
         $emgc_name = trim($_POST['emgc_name'] ?? '');
         $emgc_address = trim($_POST['emgc_address'] ?? '');
         $emgc_phone = trim($_POST['emgc_phone'] ?? '');
@@ -68,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-    $stmt = $conn->prepare("UPDATE users SET id_type=?, id_document=?, emgc_name=?, emgc_address=?, emgc_phone=?, emgc_email=?, emgc_relationship=?, verified=1 WHERE id=?");
-    $stmt->bind_param("sssssssi", $id_type, $id_document, $emgc_name, $emgc_address, $emgc_phone, $emgc_email, $emgc_relationship, $user_id);
+    $stmt = $conn->prepare("UPDATE users SET id_type=?, id_number=?, id_document=?, emgc_name=?, emgc_address=?, emgc_phone=?, emgc_email=?, emgc_relationship=?, verified=1 WHERE id=?");
+    $stmt->bind_param("ssssssssi", $id_type, $id_number, $id_document, $emgc_name, $emgc_address, $emgc_phone, $emgc_email, $emgc_relationship, $user_id);
         if ($stmt->execute()) {
             $success = 'KYC information updated successfully.';
             // Refresh user data
@@ -207,6 +208,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="Passport" <?= ($user['id_type'] ?? '') == 'Passport' ? 'selected' : '' ?>>Passport</option>
                             <option value="Driver's License" <?= ($user['id_type'] ?? '') == "Driver's License" ? 'selected' : '' ?>>Driver's License</option>
                         </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">ID Number</label>
+                        <input type="text" name="id_number" class="form-control" value="<?= htmlspecialchars($user['id_number'] ?? '') ?>">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">ID Document</label>

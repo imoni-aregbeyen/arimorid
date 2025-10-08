@@ -79,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_addons']) && is
       'grand_total' => $grand_total,
       'user_email' => $_SESSION['user_email'] ?? '',
     ];
+    // Array ( [batch_id] => batch_12_68e3bedeccabd [user_id] => 12 [orders] => Array ( [0] => Array ( [addon_id] => 6 [service] => Sample Service [days] => 1 [price] => 1000 [subtotal] => 1000 ) [1] => Array ( [addon_id] => 4 [service] => Breakfast [days] => 2 [price] => 5000 [subtotal] => 10000 ) ) [total] => 11000 [vat] => 825 [grand_total] => 11825 [user_email] => peterparker@example.com )
     header('Location: ./?page=process-payment&type=addon');
     exit;
   }

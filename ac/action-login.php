@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($user['verified'] === 0) {
                         header("Location: ../dashboard/?page=kyc");
                     } else {
-                        header("Location: ../?page=property-list");
+                        header("Location: ../?page=service-apartments");
                     }
                 }
                 exit;

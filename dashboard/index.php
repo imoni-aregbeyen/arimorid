@@ -133,6 +133,12 @@ define('PK_TEST', 'pk_test_4f31d372e25d6f5fcd353355655b63ea343fbf9c');
             <span class="pc-mtext">Users</span>
           </a>
         </li>
+        <li class="pc-item">
+          <a href="?page=withdrawals" class="pc-link">
+            <span class="pc-micon"><i class="ti ti-cash"></i></span>
+            <span class="pc-mtext">Withdrawals</span>
+          </a>
+        </li>
         <?php endif; ?>
         <?php if ($user_role == 'admin'): ?>
           <?php

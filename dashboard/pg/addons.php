@@ -13,6 +13,28 @@ try {
 } catch (Exception $e) {
   echo "Error: " . $e->getMessage();
 }
+// Stats and filter logic for admin
+$is_admin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin');
+
+// Date filter defaults
+$filter_month = isset($_GET['month']) ? intval($_GET['month']) : date('n');
+$filter_year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
+
+$order_filter_sql = "SELECT * FROM addon_orders WHERE MONTH(created_at) = $filter_month AND YEAR(created_at) = $filter_year";
+$order_filter_result = $conn->query($order_filter_sql);
+$total_order = 0;
+$total_vat = 0;
+if ($order_filter_result && $order_filter_result->num_rows > 0) {
+  while ($row = $order_filter_result->fetch_assoc()) {
+    $total_order += $row['grand_total'];
+    $total_vat += $row['vat'];
+  }
+}
+
+// For filter dropdowns
+$months = [1=>'Jan',2=>'Feb',3=>'Mar',4=>'Apr',5=>'May',6=>'Jun',7=>'Jul',8=>'Aug',9=>'Sep',10=>'Oct',11=>'Nov',12=>'Dec'];
+$years = range(date('Y')-3, date('Y')+1);
+
 ?>
 
 <!-- [ breadcrumb ] start -->
@@ -39,6 +61,52 @@ try {
   </div>
 </div>
 <!-- [ breadcrumb ] end -->
+
+<?php if ($is_admin): ?>
+<div class="row mt-3 mb-2">
+  <div class="col-md-3">
+    <div class="card text-bg-primary mb-3">
+      <div class="card-body">
+        <h6 class="card-title">Total Orders</h6>
+        <p class="card-text fs-5">₦<?= number_format($total_order, 2) ?></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-bg-success mb-3">
+      <div class="card-body">
+        <h6 class="card-title">Total VAT</h6>
+        <p class="card-text fs-5">₦<?= number_format($total_vat, 2) ?></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <form method="get" class="d-flex align-items-end flex-wrap gap-2">
+      <input type="hidden" name="page" value="addons">
+      <div>
+        <label for="month" class="form-label mb-0">Month</label>
+        <select name="month" id="month" class="form-select">
+          <?php foreach ($months as $num => $name): ?>
+            <option value="<?= $num ?>"<?= $filter_month == $num ? ' selected' : '' ?>><?= $name ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div>
+        <label for="year" class="form-label mb-0">Year</label>
+        <select name="year" id="year" class="form-select">
+          <?php foreach ($years as $yr): ?>
+            <option value="<?= $yr ?>"<?= $filter_year == $yr ? ' selected' : '' ?>><?= $yr ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary ms-2">Filter</button>
+        <a href="./?page=addons" class="btn btn-outline-secondary ms-1">Reset</a>
+      </div>
+    </form>
+  </div>
+</div>
+<?php endif; ?>
 
 <!-- Modal: View Services -->
 <div class="modal fade" id="viewServicesModal" tabindex="-1" aria-labelledby="viewServicesModalLabel" aria-hidden="true">

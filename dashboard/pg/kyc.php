@@ -19,6 +19,7 @@ $stmt->close();
 // Handle KYC Information Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_kyc_info'])) {
     $id_type = trim($_POST['id_type'] ?? '');
+    $id_number = trim($_POST['id_number'] ?? '');
     $emgc_name = trim($_POST['emgc_name'] ?? '');
     $emgc_address = trim($_POST['emgc_address'] ?? '');
     $emgc_phone = trim($_POST['emgc_phone'] ?? '');
@@ -36,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_kyc_info'])) {
         }
     }
 
-    $stmt = $conn->prepare("UPDATE users SET id_type=?, id_document=?, emgc_name=?, emgc_address=?, emgc_phone=?, emgc_email=?, emgc_relationship=?, verified=1 WHERE id=?");
-    $stmt->bind_param("sssssssi", $id_type, $id_document, $emgc_name, $emgc_address, $emgc_phone, $emgc_email, $emgc_relationship, $user_id);
+    $stmt = $conn->prepare("UPDATE users SET id_type=?, id_number=?, id_document=?, emgc_name=?, emgc_address=?, emgc_phone=?, emgc_email=?, emgc_relationship=?, verified=1 WHERE id=?");
+    $stmt->bind_param("ssssssssi", $id_type, $id_number, $id_document, $emgc_name, $emgc_address, $emgc_phone, $emgc_email, $emgc_relationship, $user_id);
     if ($stmt->execute()) {
         $success = 'KYC information updated successfully.';
         // Refresh user data
@@ -73,38 +74,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_kyc_info'])) {
         <input type="hidden" name="update_kyc_info" value="1">
         <div class="col-md-4">
             <label class="form-label">ID Type</label>
-            <select name="id_type" class="form-select">
+            <select name="id_type" class="form-select" required>
                 <option value="NIN" <?= ($user['id_type'] ?? '') == 'NIN' ? 'selected' : '' ?>>NIN</option>
                 <option value="Passport" <?= ($user['id_type'] ?? '') == 'Passport' ? 'selected' : '' ?>>Passport</option>
                 <option value="Driver's License" <?= ($user['id_type'] ?? '') == "Driver's License" ? 'selected' : '' ?>>Driver's License</option>
             </select>
         </div>
         <div class="col-md-4">
+            <label class="form-label">ID Number</label>
+            <input type="text" name="id_number" class="form-control" value="<?= htmlspecialchars($user['id_number'] ?? '') ?>" required>
+        </div>
+        <div class="col-md-4">
             <label class="form-label">ID Document</label>
-            <input type="file" name="id_document" class="form-control" accept="image/*,application/pdf">
+            <input type="file" name="id_document" class="form-control" accept="image/*,application/pdf" required>
             <?php if (!empty($user['id_document'])): ?>
                 <small class="text-muted">Current: <a href="../../uploads/<?= htmlspecialchars($user['id_document']) ?>" target="_blank">View Document</a></small>
             <?php endif; ?>
         </div>
         <div class="col-md-4">
             <label class="form-label">Emergency Contact Name</label>
-            <input type="text" name="emgc_name" class="form-control" value="<?= htmlspecialchars($user['emgc_name'] ?? '') ?>">
+            <input type="text" name="emgc_name" class="form-control" value="<?= htmlspecialchars($user['emgc_name'] ?? '') ?>" required>
         </div>
         <div class="col-md-6">
             <label class="form-label">Emergency Contact Address</label>
-            <input type="text" name="emgc_address" class="form-control" value="<?= htmlspecialchars($user['emgc_address'] ?? '') ?>">
+            <input type="text" name="emgc_address" class="form-control" value="<?= htmlspecialchars($user['emgc_address'] ?? '') ?>" required>
         </div>
         <div class="col-md-3">
             <label class="form-label">Emergency Contact Phone</label>
-            <input type="text" name="emgc_phone" class="form-control" value="<?= htmlspecialchars($user['emgc_phone'] ?? '') ?>">
+            <input type="text" name="emgc_phone" class="form-control" value="<?= htmlspecialchars($user['emgc_phone'] ?? '') ?>" required>
         </div>
         <div class="col-md-3">
             <label class="form-label">Emergency Contact Email</label>
-            <input type="email" name="emgc_email" class="form-control" value="<?= htmlspecialchars($user['emgc_email'] ?? '') ?>">
+            <input type="email" name="emgc_email" class="form-control" value="<?= htmlspecialchars($user['emgc_email'] ?? '') ?>" required>
         </div>
         <div class="col-md-4">
             <label class="form-label">Emergency Contact Relationship</label>
-            <select name="emgc_relationship" class="form-select">
+            <select name="emgc_relationship" class="form-select" required>
                 <option value="Parent" <?= ($user['emgc_relationship'] ?? '') == 'Parent' ? 'selected' : '' ?>>Parent</option>
                 <option value="Sibling" <?= ($user['emgc_relationship'] ?? '') == 'Sibling' ? 'selected' : '' ?>>Sibling</option>
                 <option value="Spouse" <?= ($user['emgc_relationship'] ?? '') == 'Spouse' ? 'selected' : '' ?>>Spouse</option>

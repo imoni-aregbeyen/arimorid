@@ -10,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Get pending addon order from session
 $addon_order = $_SESSION['pending_addon_order'] ?? null;
+// Array ( [batch_id] => batch_12_68e3bf4f72436 [user_id] => 12 [orders] => Array ( [0] => Array ( [addon_id] => 6 [service] => Sample Service [days] => 1 [price] => 1000 [subtotal] => 1000 ) [1] => Array ( [addon_id] => 4 [service] => Breakfast [days] => 2 [price] => 5000 [subtotal] => 10000 ) ) [total] => 11000 [vat] => 825 [grand_total] => 11825 [user_email] => peterparker@example.com )
 if (!$addon_order || empty($addon_order['orders'])) {
     echo '<div class="alert alert-danger">No pending addon order found.</div>';
     return;
