@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <th>Phone</th>
                     <th>ID Type</th>
                     <th>ID Number</th>
-                    <th>ID Document</th>
+                    <!-- <th>ID Document</th> -->
                     <th></th>
                   </tr>
                 </thead>
@@ -107,16 +107,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       <td><?= htmlspecialchars($user['phone']) ?></td>
                       <td><?= htmlspecialchars($user['id_type'] ?? '') ?></td>
                       <td><?= htmlspecialchars($user['id_number'] ?? '') ?></td>
-                      <td>
+                      <!-- <td>
                         <?php if (!empty($user['id_document'])): ?>
                           <a href="../uploads/<?= htmlspecialchars($user['id_document']) ?>" target="_blank" class="btn btn-sm btn-info">View Document</a>
                         <?php else: ?>
                           <span class="text-muted">No document</span>
                         <?php endif; ?>
-                      </td>
+                      </td> -->
                       <td>
-                        <a href="?page=edit-owner&id=<?= $user['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
-                        <a href="?page=delete-owner&id=<?= $user['id'] ?>" class="btn btn-sm btn-danger">Delete</a>
+                        <a href="?page=user-details&id=<?= $user['id'] ?>" class="btn btn-sm btn-info">View</a>
                       </td>
                     </tr>
                   <?php endforeach; ?>
