@@ -26,6 +26,9 @@
         </button>
       </div>
     </div>
+    <div class="mb-2">
+      <small class="text-muted">By signing up, you agree to our <a href="./?page=privacy_policy" target="_blank">Privacy Policy</a>.</small>
+    </div>
     <div class="mb-3 d-grid gap-2">
       <button type="submit" class="btn btn-primary">Create Account</button>
     </div>
