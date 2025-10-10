@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_kyc_info'])) {
         if (isset($_FILES['id_document']) && $_FILES['id_document']['error'] == UPLOAD_ERR_OK) {
             $ext = pathinfo($_FILES['id_document']['name'], PATHINFO_EXTENSION);
             $filename = 'id_doc_' . time() . '_' . rand(1000,9999) . '.' . $ext;
-            $target = '../../uploads/' . $filename;
+            $target = '../uploads/' . $filename;
             if (move_uploaded_file($_FILES['id_document']['tmp_name'], $target)) {
                 $id_document = $filename;
             }
@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_kyc_info'])) {
             <label class="form-label">ID Document <span class="text-danger">*</span></label>
             <input type="file" name="id_document" class="form-control" accept="image/*,application/pdf" <?= empty($user['id_document']) ? 'required' : '' ?>>
             <?php if (!empty($user['id_document'])): ?>
-                <small class="text-muted">Current: <a href="../../uploads/<?= htmlspecialchars($user['id_document']) ?>" target="_blank">View Document</a></small>
+                <small class="text-muted">Current: <a href="../uploads/<?= htmlspecialchars($user['id_document']) ?>" target="_blank">View Document</a></small>
             <?php else: ?>
                 <small class="text-danger">ID document is required for verification.</small>
             <?php endif; ?>

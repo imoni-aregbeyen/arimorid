@@ -123,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <th>Owner Daily Charge</th>
                     <th>Listing Daily Charge</th>
                     <th>Service Charge</th>
+                    <th>Units</th>
                     <th>Status</th>
                     <?php if ($_SESSION['user_role'] === 'admin'): ?>
                         <th>Owner</th>
@@ -133,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <tbody>
                 <?php
                 // Build the SQL query based on user role
-                $sql = "SELECT id, owner_id, images, address, title, owner_daily_charge, listing_daily_charge, service_charge, status FROM service_apartments";
+                $sql = "SELECT id, owner_id, images, address, title, owner_daily_charge, listing_daily_charge, service_charge, units, status FROM service_apartments";
                 if ($_SESSION['user_role'] !== 'admin') {
                     $sql .= " WHERE owner_id = " . intval($_SESSION['user_id']);
                 }
@@ -160,27 +161,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         $status_badge = $row['status'] == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Suspended</span>';
 
-                        echo "<tr>
-                                <td>{$row['id']}</td>
-                                <td><img src='../uploads/{$row['images']}' alt='Apartment Image' style='width: 100px; height: auto;'></td>
-                                <td>
-                                    <form method='POST' class='d-inline'>
-                                        <input type='hidden' name='edit_id' value='{$row['id']}'>
-                                        <input type='text' name='address' value='{$row['address']}' class='form-control form-control-sm'>
-                                </td>
-                                <td>
-                                        <input type='text' name='title' value='{$row['title']}' class='form-control form-control-sm'>
-                                </td>
-                                <td>
-                                        <input type='number' step='0.01' name='owner_daily_charge' value='{$row['owner_daily_charge']}' class='form-control form-control-sm'>
-                                </td>
-                                <td>
-                                        <input type='number' step='0.01' name='listing_daily_charge' value='{$row['listing_daily_charge']}' class='form-control form-control-sm'>
-                                </td>
-                                <td>
-                                        <input type='number' step='0.01' name='service_charge' value='{$row['service_charge']}' class='form-control form-control-sm'>
-                                </td>
-                                <td>$status_badge</td>";
+            echo "<tr>
+                <td>{$row['id']}</td>
+                <td><img src='../uploads/{$row['images']}' alt='Apartment Image' style='width: 100px; height: auto;'></td>
+                <td>
+                    <form method='POST' class='d-inline'>
+                    <input type='hidden' name='edit_id' value='{$row['id']}'>
+                    <input type='text' name='address' value='{$row['address']}' class='form-control form-control-sm'>
+                </td>
+                <td>
+                    <input type='text' name='title' value='{$row['title']}' class='form-control form-control-sm'>
+                </td>
+                <td>
+                    <input type='number' step='0.01' name='owner_daily_charge' value='{$row['owner_daily_charge']}' class='form-control form-control-sm'>
+                </td>
+                <td>
+                    <input type='number' step='0.01' name='listing_daily_charge' value='{$row['listing_daily_charge']}' class='form-control form-control-sm'>
+                </td>
+                <td>
+                    <input type='number' step='0.01' name='service_charge' value='{$row['service_charge']}' class='form-control form-control-sm'>
+                </td>
+                <td>{$row['units']}</td>
+                <td>$status_badge</td>";
                         if ($_SESSION['user_role'] === 'admin') {
                             echo "
                                 <td>
