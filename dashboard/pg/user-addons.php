@@ -126,7 +126,7 @@ if ($order_stmt) {
                   <th>Select</th>
                   <th>Service</th>
                   <th>Price</th>
-                  <th>Days</th>
+                  <th>Units</th>
                   <th>Subtotal</th>
                 </tr>
               </thead>
@@ -136,7 +136,7 @@ if ($order_stmt) {
                   <td><input type="checkbox" name="addon_ids[]" value="<?= $addon['id'] ?>" class="addon-check"></td>
                   <td><?= htmlspecialchars($addon['service']) ?></td>
                   <td class="addon-price" data-price="<?= $addon['price'] ?>">₦<?= number_format($addon['price'],2) ?></td>
-                  <td><input type="number" name="days[<?= $addon['id'] ?>]" min="1" value="1" class="form-control days-input" style="width:80px;" disabled></td>
+                  <td><input type="number" name="days[<?= $addon['id'] ?>]" min="1" value="1" class="form-control days-input" style="width:80px;" disabled placeholder="Units"></td>
                   <td class="addon-subtotal">₦0.00</td>
                 </tr>
                 <?php endforeach; ?>
@@ -195,7 +195,7 @@ if ($order_stmt) {
                       <div class="card-body">
                         <h6 class="card-title mb-2">Service: <?= htmlspecialchars($order['service']) ?></h6>
                         <ul class="list-unstyled mb-2">
-                          <li><strong>Days:</strong> <?= $order['days'] ?></li>
+                          <li><strong>Units:</strong> <?= $order['days'] ?></li>
                           <li><strong>Price:</strong> ₦<?= number_format($order['price'], 2) ?></li>
                           <li><strong>Subtotal:</strong> ₦<?= number_format($order['subtotal'], 2) ?></li>
                         </ul>

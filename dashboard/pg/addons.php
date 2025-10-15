@@ -184,7 +184,7 @@ $years = range(date('Y')-3, date('Y')+1);
                               <?php endif; ?>
                             </div>
                             <div class="mb-3">
-                              <label for="price<?= $addon['id'] ?>" class="form-label">Price (per day)</label>
+                              <label for="price<?= $addon['id'] ?>" class="form-label">Price (per unit)</label>
                               <input type="number" step="0.01" class="form-control" id="price<?= $addon['id'] ?>" name="price" value="<?= htmlspecialchars($addon['price']) ?>" required>
                             </div>
                           </div>
@@ -292,7 +292,7 @@ if ($order_result && $order_result->num_rows > 0) {
                         <h6 class="card-title mb-2">Service: <?= htmlspecialchars($order['service']) ?></h6>
                         <ul class="list-unstyled mb-2">
                           <li><strong>User:</strong> <?= htmlspecialchars($order['name']) ?></li>
-                          <li><strong>Days:</strong> <?= $order['days'] ?></li>
+                          <li><strong>Units:</strong> <?= $order['days'] ?></li>
                           <li><strong>Price:</strong> ₦<?= number_format($order['price'], 2) ?></li>
                           <li><strong>Subtotal:</strong> ₦<?= number_format($order['subtotal'], 2) ?></li>
                         </ul>
@@ -339,7 +339,7 @@ if ($order_result && $order_result->num_rows > 0) {
             <th>Picture</th>
             <th>Service</th>
             <th>Description</th>
-            <th>Price (per day)</th>
+            <th>Price (per unit)</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -402,7 +402,7 @@ if ($order_result && $order_result->num_rows > 0) {
             <input type="file" class="form-control" id="picture" name="picture" accept="image/*">
           </div>
           <div class="mb-3">
-            <label for="price" class="form-label">Price (per day)</label>
+            <label for="price" class="form-label">Price (per unit)</label>
             <input type="number" step="0.01" class="form-control" id="price" name="price" required>
           </div>
         </div>
