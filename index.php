@@ -113,9 +113,9 @@ define('PK_TEST', 'pk_test_4f31d372e25d6f5fcd353355655b63ea343fbf9c');
                         <a href="?page=contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
-                        <a href="./dashboard/" class="btn btn-primary px-3 d-none d-lg-flex">Dashboard</a>
+                        <a href="./dashboard/" class="btn btn-primary px-3 d-lg-flex">Dashboard</a>
                     <?php else: ?>
-                        <a href="./?page=login" class="btn btn-primary px-3 d-none d-lg-flex">Login</a>
+                        <a href="./?page=login" class="btn btn-primary px-3 d-lg-flex">Login</a>
                     <?php endif; ?>
                 </div>
             </nav>
@@ -147,7 +147,8 @@ define('PK_TEST', 'pk_test_4f31d372e25d6f5fcd353355655b63ea343fbf9c');
                         <a class="btn btn-link text-white-50" href="./?page=contact">Contact Us</a>
                         <a class="btn btn-link text-white-50" href="./?page=services">Our Services</a>
                         <a class="btn btn-link text-white-50" href="./?page=privacy_policy">Privacy Policy</a>
-                        <a class="btn btn-link text-white-50" href="./?page=terms_condition">Terms & Condition</a>
+                        <a class="btn btn-link text-white-50" href="./?page=service_terms">Terms & Condition</a>
+                        <a class="btn btn-link text-white-50" href="./?page=cookie_policy">Cookie Policy</a>
                     </div>
                     <div class="col-lg-4 col-md-6">
                         <h5 class="text-white mb-4">Photo Gallery</h5>

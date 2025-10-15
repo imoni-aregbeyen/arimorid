@@ -25,7 +25,7 @@ $apartments = $properties;
             <?php foreach ($apartments as $apartment): $images = json_decode($apartment['images']); ?>
                 <div class="col-lg-4 col-md-6">
                     <div class="card border-0 shadow-sm">
-                        <img src="./uploads/properties/<?php echo $images[0]; ?>" class="card-img-top" alt="<?php echo htmlspecialchars($apartment['title']); ?>">
+                        <img src="./uploads/properties/<?php echo $images[0]; ?>" class="card-img-top property-img" alt="<?php echo htmlspecialchars($apartment['title']); ?>">
                         <div class="card-body">
                             <h5 class="card-title"><?php echo htmlspecialchars($apartment['title']); ?></h5>
                             <p class="card-text"><?php echo htmlspecialchars($apartment['address']); ?></p>
@@ -41,3 +41,13 @@ $apartments = $properties;
     </div>
 </div>
 <!-- Apartments Section End -->
+
+<style>
+.property-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+</style>

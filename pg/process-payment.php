@@ -16,7 +16,8 @@ function show_error($message) {
 if (!isset($_SESSION['pending_booking'])) {
     die(show_error("No booking data found. Please start the booking process again."));
 }
-
+// print_r($_SESSION['pending_booking']); die;
+// Array ( [apartment_id] => 8 [days] => 1 [total_cost] => 60100 [user_id] => 12 [user_email] => peterparker@example.com [check_in] => 2025-10-10T17:44 [check_out] => 2025-10-11T17:44 )
 $booking = $_SESSION['pending_booking'];
 $paystack_secret_key = SK_TEST;
 

@@ -135,11 +135,11 @@ function show_error($message) {
                 <div class="row mb-3">
                     <div class="col-lg">
                         <label for="checkIn" class="form-label">Check In</label>
-                        <input type="date" name="check_in" id="checkIn" class="form-control" required>
+                        <input type="datetime-local" name="check_in" id="checkIn" class="form-control" required>
                     </div>
                     <div class="col-lg">
                         <label for="checkOut" class="form-label">Check Out</label>
-                        <input type="date" name="check_out" id="checkOut" class="form-control" required>
+                        <input type="datetime-local" name="check_out" id="checkOut" class="form-control" required>
                     </div>
                 </div>
                 <div class="mb-3">

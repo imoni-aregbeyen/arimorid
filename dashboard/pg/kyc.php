@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_kyc_info'])) {
                 $result = $stmt->get_result();
                 $user = $result->fetch_assoc();
                 $stmt->close();
+                echo '<script>setTimeout(function(){ window.location.href = "./"; }, 1500);</script>';
             } else {
                 $error = 'Error updating KYC information.';
             }

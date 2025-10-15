@@ -59,7 +59,7 @@ try {
     if (!$booking_data) {
         throw new Exception("No booking data found");
     }
-
+    // Array ( [apartment_id] => 8 [days] => 1 [total_cost] => 60100 [user_id] => 12 [user_email] => peterparker@example.com [check_in] => 2025-10-10T17:44 [check_out] => 2025-10-11T17:44 )
     // Prepare data
     $booking_data = (array)$booking_data;
     $user_id = $booking_data['user_id'] ?? null;
@@ -67,6 +67,8 @@ try {
     $days = $booking_data['days'] ?? null;
     $addons = $booking_data['addons'] ?? [];
     $total_cost = $booking_data['total_cost'] ?? null;
+    $check_in = $booking_data['check_in'] ?? null;
+    $check_out = $booking_data['check_out'] ?? null;
     
     // Calculate other values if not in metadata
     $apartment = get_data("service_apartments", "WHERE id=$apartment_id")[0];
@@ -89,14 +91,12 @@ try {
 
     // Insert booking
     $stmt = $conn->prepare("INSERT INTO bookings 
-        (user_id, apartment_id, days, addons, total_daily_charge, caution_fee, addons_cost, vat, total_cost, payment_reference, created_at) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-    
+        (user_id, apartment_id, days, addons, total_daily_charge, caution_fee, addons_cost, vat, total_cost, payment_reference, check_in, check_out, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
     if (!$stmt) {
         throw new Exception("Prepare failed: " . $conn->error);
     }
-    
-    $bind_result = $stmt->bind_param("iiissdddds", 
+    $bind_result = $stmt->bind_param("iiissddddsss", 
         $user_id, 
         $apartment_id, 
         $days, 
@@ -106,9 +106,10 @@ try {
         $addons_cost, 
         $vat, 
         $total_cost, 
-        $reference
+        $reference,
+        $check_in,
+        $check_out
     );
-    
     if (!$bind_result) {
         throw new Exception("Bind failed: " . $stmt->error);
     }
