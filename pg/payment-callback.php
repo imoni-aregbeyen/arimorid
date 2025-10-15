@@ -59,7 +59,7 @@ try {
     if (!$booking_data) {
         throw new Exception("No booking data found");
     }
-    // Array ( [apartment_id] => 8 [days] => 1 [total_cost] => 60100 [user_id] => 12 [user_email] => peterparker@example.com [check_in] => 2025-10-10T17:44 [check_out] => 2025-10-11T17:44 )
+
     // Prepare data
     $booking_data = (array)$booking_data;
     $user_id = $booking_data['user_id'] ?? null;
@@ -67,6 +67,7 @@ try {
     $days = $booking_data['days'] ?? null;
     $addons = $booking_data['addons'] ?? [];
     $total_cost = $booking_data['total_cost'] ?? null;
+    $owner_total = $booking_data['owner_total'] ?? null;
     $check_in = $booking_data['check_in'] ?? null;
     $check_out = $booking_data['check_out'] ?? null;
     
@@ -89,14 +90,16 @@ try {
     $vat = $total_daily_charge * 0.075;
     $addons_str = implode(', ', $addons_names);
 
-    // Insert booking
+    // Insert booking - CORRECTED: 13 placeholders for 13 variables
     $stmt = $conn->prepare("INSERT INTO bookings 
-        (user_id, apartment_id, days, addons, total_daily_charge, caution_fee, addons_cost, vat, total_cost, payment_reference, check_in, check_out, created_at) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        (user_id, apartment_id, days, addons, total_daily_charge, caution_fee, addons_cost, vat, total_cost, owner_total, payment_reference, check_in, check_out, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
     if (!$stmt) {
         throw new Exception("Prepare failed: " . $conn->error);
     }
-    $bind_result = $stmt->bind_param("iiissddddsss", 
+    
+    // CORRECTED: 13 variables for 13 placeholders (removed one 'd' from type definition)
+    $bind_result = $stmt->bind_param("iiissddddssss", 
         $user_id, 
         $apartment_id, 
         $days, 
@@ -106,6 +109,7 @@ try {
         $addons_cost, 
         $vat, 
         $total_cost, 
+        $owner_total,
         $reference,
         $check_in,
         $check_out

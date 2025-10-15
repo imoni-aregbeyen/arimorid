@@ -45,7 +45,7 @@ if ($user_role === 'admin') {
     $bookings_count = $bookings_result->fetch_assoc()['count'] ?? 0;
     
     // Get owner's total earnings
-    $earnings_sql = "SELECT SUM(b.total_daily_charge * b.days) as earnings 
+    $earnings_sql = "SELECT SUM(b.owner_total) as earnings 
                      FROM bookings b
                      JOIN service_apartments a ON b.apartment_id = a.id
                      WHERE a.owner_id = $user_id AND YEAR(b.created_at) = $selected_year AND MONTH(b.created_at) = $selected_month";
@@ -292,7 +292,6 @@ if ($user_role === 'admin') {
                                     <th>Apartment</th>
                                     <th>Customer</th>
                                     <th>Days</th>
-                                    <th>Total Cost</th>
                                     <th>Your Earnings</th>
                                     <th>Check-in</th>
                                     <th>Check-out</th>
@@ -302,7 +301,7 @@ if ($user_role === 'admin') {
                             <tbody>
                                 <?php
                                 $owner_bookings = $conn->query("
-                     SELECT b.id, b.days, b.total_cost, b.total_daily_charge, b.created_at, b.check_in, b.check_out,
+                     SELECT b.id, b.days, b.total_cost, b.owner_total, b.created_at, b.check_in, b.check_out,
                          a.title as apartment_title, u.name as customer_name
                      FROM bookings b
                      JOIN service_apartments a ON b.apartment_id = a.id
@@ -313,13 +312,12 @@ if ($user_role === 'admin') {
                                 
                                 if ($owner_bookings->num_rows > 0) {
                                     while($booking = $owner_bookings->fetch_assoc()) {
-                                        $owner_earnings = $booking['total_daily_charge'] * $booking['days'];
+                                        $owner_earnings = $booking['owner_total'];
                                         echo "<tr>
                                             <td>#{$booking['id']}</td>
                                             <td>{$booking['apartment_title']}</td>
                                             <td>{$booking['customer_name']}</td>
                                             <td>{$booking['days']}</td>
-                                            <td>₦" . number_format($booking['total_cost'], 2) . "</td>
                                             <td>₦" . number_format($owner_earnings, 2) . "</td>
                                             <td>" . date('M j, Y', strtotime($booking['check_in'])) . "</td>
                                             <td>" . date('M j, Y', strtotime($booking['check_out'])) . "</td>

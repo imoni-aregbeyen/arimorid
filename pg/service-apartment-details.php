@@ -54,14 +54,18 @@ function handleBookingRequest() {
     $days = max(1, (int)($_POST['days'] ?? 1));
     $listing_daily_charge = (float)$apartment['listing_daily_charge'];
     $service_charge = (float)$apartment['service_charge'];
+    $owner_daily_charge = (float)$apartment['owner_daily_charge'];
     $total_daily_charge = $listing_daily_charge * $days;
     $vat = $total_daily_charge * 0.075;
     $total_cost = $total_daily_charge + $service_charge + $vat;
+    $owner_total = $owner_daily_charge * $days;
     // Store booking details in session
     $_SESSION['pending_booking'] = [
         'apartment_id' => $apartment['id'],
         'days' => $days,
         'total_cost' => $total_cost,
+        'owner_daily_charge' => $owner_daily_charge,
+        'owner_total' => $owner_total,
         'user_id' => $_SESSION['user_id'],
         'user_email' => $_SESSION['user_email'] ?? 'customer@example.com',
         'check_in' => $check_in,
@@ -158,6 +162,7 @@ function show_error($message) {
                     <p><strong>VAT (7.5%):</strong></p>
                     <p id="vat">₦<?php echo number_format($apartment['listing_daily_charge'] * 0.075, 2); ?></p>
                 </div>
+                <!-- Owner payout fields hidden from user -->
                 <hr>
                 <div class="d-flex justify-content-between">
                     <p><strong>Total Cost:</strong></p>

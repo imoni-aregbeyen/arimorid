@@ -7,7 +7,7 @@ if (!$user_id || $user_role !== 'owner') {
     exit;
 }
 // Get total earnings
-$earnings_sql = "SELECT SUM(b.total_daily_charge * b.days) as earnings FROM bookings b JOIN service_apartments a ON b.apartment_id = a.id WHERE a.owner_id = $user_id";
+$earnings_sql = "SELECT SUM(b.owner_total) as earnings FROM bookings b JOIN service_apartments a ON b.apartment_id = a.id WHERE a.owner_id = $user_id";
 $earnings_result = $conn->query($earnings_sql);
 $total_earnings = $earnings_result->fetch_assoc()['earnings'] ?? 0;
 // Get total withdrawn
