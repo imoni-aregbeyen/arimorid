@@ -1,34 +1,51 @@
 <?php
 // id, name, email, password, role, verified, phone, dob, address, id_type, id_number, id_document, account_number, bank_name, account_name,
 // emgc_name, emgc_address, emgc_phone, emgc_email, emgc_relationship, created_at
-$id = (int) $_GET['id'] ?? null;
+
+$id = (int) ($_GET['id'] ?? 0);
+
+// Always fetch user first before processing POST
+$rs = $conn->query("SELECT * FROM users WHERE id = $id LIMIT 1");
+$user = $rs->num_rows ? $rs->fetch_assoc() : null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_user'])) {
-        $name = $conn->real_escape_string($_POST['name']);
-        $email = $conn->real_escape_string($_POST['email']);
-        $phone = $conn->real_escape_string($_POST['phone']);
-    $role = $conn->real_escape_string($_POST['role'] ?? '');
-        $verified = isset($_POST['verified']) ? 1 : 0;
-    $dob = $conn->real_escape_string($_POST['dob'] ?? '');
-    $occupation = $conn->real_escape_string($_POST['occupation'] ?? '');
-    $address = $conn->real_escape_string($_POST['address']);
-    $id_type = $conn->real_escape_string($_POST['id_type']);
-    $id_number = $conn->real_escape_string($_POST['id_number']);
-    $account_number = $conn->real_escape_string($_POST['account_number'] ?? '');
-    $bank_name = $conn->real_escape_string($_POST['bank_name'] ?? '');
-    $account_name = $conn->real_escape_string($_POST['account_name'] ?? '');
-        $emgc_name = $conn->real_escape_string($_POST['emgc_name']);
-        $emgc_address = $conn->real_escape_string($_POST['emgc_address']);
-        $emgc_phone = $conn->real_escape_string($_POST['emgc_phone']);
-        $emgc_email = $conn->real_escape_string($_POST['emgc_email']);
-        $emgc_relationship = $conn->real_escape_string($_POST['emgc_relationship']);
-    $sql = "UPDATE users SET name='$name', email='$email', phone='$phone', role='$role', verified='$verified', dob='$dob', address='$address', occupation='$occupation', id_type='$id_type', id_number='$id_number', account_number='$account_number', bank_name='$bank_name', account_name='$account_name', emgc_name='$emgc_name', emgc_address='$emgc_address', emgc_phone='$emgc_phone', emgc_email='$emgc_email', emgc_relationship='$emgc_relationship' WHERE id=$id";
-        if ($conn->query($sql)) {
-            echo '<div class="alert alert-success">User updated successfully.</div>';
+        // Only proceed if $user is valid
+        if ($user) {
+            $name = isset($_POST['name']) && $_POST['name'] !== '' ? $conn->real_escape_string($_POST['name']) : $user['name'];
+            $email = isset($_POST['email']) && $_POST['email'] !== '' ? $conn->real_escape_string($_POST['email']) : $user['email'];
+            $phone = isset($_POST['phone']) && $_POST['phone'] !== '' ? $conn->real_escape_string($_POST['phone']) : $user['phone'];
+            $role = isset($_POST['role']) && $_POST['role'] !== '' ? $conn->real_escape_string($_POST['role']) : $user['role'];
+            $verified = isset($_POST['verified']) ? 1 : $user['verified'];
+            $dob = isset($_POST['dob']) && $_POST['dob'] !== '' ? $conn->real_escape_string($_POST['dob']) : $user['dob'];
+            $occupation = isset($_POST['occupation']) && $_POST['occupation'] !== '' ? $conn->real_escape_string($_POST['occupation']) : $user['occupation'];
+            $address = isset($_POST['address']) && $_POST['address'] !== '' ? $conn->real_escape_string($_POST['address']) : $user['address'];
+            $id_type = isset($_POST['id_type']) && $_POST['id_type'] !== '' ? $conn->real_escape_string($_POST['id_type']) : $user['id_type'];
+            $id_number = isset($_POST['id_number']) && $_POST['id_number'] !== '' ? $conn->real_escape_string($_POST['id_number']) : $user['id_number'];
+            $account_number = isset($_POST['account_number']) && $_POST['account_number'] !== '' ? $conn->real_escape_string($_POST['account_number']) : $user['account_number'];
+            $bank_name = isset($_POST['bank_name']) && $_POST['bank_name'] !== '' ? $conn->real_escape_string($_POST['bank_name']) : $user['bank_name'];
+            $account_name = isset($_POST['account_name']) && $_POST['account_name'] !== '' ? $conn->real_escape_string($_POST['account_name']) : $user['account_name'];
+            $emgc_name = isset($_POST['emgc_name']) && $_POST['emgc_name'] !== '' ? $conn->real_escape_string($_POST['emgc_name']) : $user['emgc_name'];
+            $emgc_address = isset($_POST['emgc_address']) && $_POST['emgc_address'] !== '' ? $conn->real_escape_string($_POST['emgc_address']) : $user['emgc_address'];
+            $emgc_phone = isset($_POST['emgc_phone']) && $_POST['emgc_phone'] !== '' ? $conn->real_escape_string($_POST['emgc_phone']) : $user['emgc_phone'];
+            $emgc_email = isset($_POST['emgc_email']) && $_POST['emgc_email'] !== '' ? $conn->real_escape_string($_POST['emgc_email']) : $user['emgc_email'];
+            $emgc_relationship = isset($_POST['emgc_relationship']) && $_POST['emgc_relationship'] !== '' ? $conn->real_escape_string($_POST['emgc_relationship']) : $user['emgc_relationship'];
+            
+            $sql = "UPDATE users SET name='$name', email='$email', phone='$phone', role='$role', verified='$verified', dob='$dob', address='$address', occupation='$occupation', id_type='$id_type', id_number='$id_number', account_number='$account_number', bank_name='$bank_name', account_name='$account_name', emgc_name='$emgc_name', emgc_address='$emgc_address', emgc_phone='$emgc_phone', emgc_email='$emgc_email', emgc_relationship='$emgc_relationship' WHERE id=$id";
+            
+            if ($conn->query($sql)) {
+                echo '<div class="alert alert-success">User updated successfully.</div>';
+                // Refresh user data after update
+                $rs = $conn->query("SELECT * FROM users WHERE id = $id LIMIT 1");
+                $user = $rs->num_rows ? $rs->fetch_assoc() : null;
+            } else {
+                echo '<div class="alert alert-danger">Error updating user: ' . htmlspecialchars($conn->error) . '</div>';
+            }
         } else {
-            echo '<div class="alert alert-danger">Error updating user: ' . htmlspecialchars($conn->error) . '</div>';
+            echo '<div class="alert alert-danger">User not found. Cannot update.</div>';
         }
     }
+    
     if (isset($_POST['delete_user'])) {
         $sql = "DELETE FROM users WHERE id=$id";
         if ($conn->query($sql)) {
@@ -40,9 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-$rs = $conn->query("SELECT * FROM users WHERE id = $id LIMIT 1");
-$user = $rs->num_rows ? $rs->fetch_assoc() : null;
 ?>
+
 <?php if ($user): ?>
 <div class="container py-4">
     <h2>User Details</h2>
